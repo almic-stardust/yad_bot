@@ -1,0 +1,82 @@
+# You must restart the bot if you modify this file.
+
+# Your discord token. See https://discordpy.readthedocs.io/en/stable/discord.html
+Token: ""
+
+# If you want the bot’s actions logged in a dedicated channel. Otherwise, comment it out.
+Log_chan: "bot-log"
+
+DB_config:
+  host:               ""
+  user:               ""
+  password:           ""
+  database:           ""
+
+Users:
+  bot_owner:
+    # Your discord username, without the @
+    discord_username: ""
+    birthday:         AAAA-MM-JJ
+  user1:
+    birthday:         AAAA-MM-JJ
+    start_date:       AAAA-MM-JJ
+    bot_owner:        ""
+    language:         "English"
+    # Europe time format "%a %d/%m %H:%M"
+    # US time format "%a %m/%d %I:%M %p"
+    timeformat:       ""
+    nick:             ""
+    main_server:      0000000000000000000
+    main_chan:        ""
+    discord_username: ""
+    timezone:         ""
+    reminders:        
+      - ["reminder1", "reminder2"]
+  user2:
+    birthday:         AAAA-MM-JJ
+    start_date:       AAAA-MM-JJ
+    bot_owner:        ""
+    language:         ""
+    timeformat:       ""
+    nick:             ""
+    main_server:      0000000000000000000
+    main_chan:        ""
+    discord_username: ""
+    timezone:         ""
+  user3:
+    birthday:         AAAA-MM-JJ
+    start_date:       AAAA-MM-JJ
+    bot_owner:        ""
+    language:         ""
+    timeformat:       ""
+    nick:             ""
+    main_server:      0000000000000000000
+    main_chan:        ""
+    discord_username: ""
+    timezone:         ""
+    reminders:        
+      - ["reminder1"]
+
+Rewards_available:
+  user1:
+    # Reward name, cost, and description
+    - ["task1", 25,
+       "desc1"]
+    - ["task2", 100,
+       "desc2"]
+    - ["task3", 200,
+       "desc3"]
+  user2:
+    - ["task1", 50,
+       "desc1"]
+    - ["task2", 25,
+       "desc2"]
+    - ["task3", 200,
+       "desc3"]
+  user3:
+    - ["task1", 25,
+       "desc1"]
+    - ["task2", 100,
+       "desc2"]
+    - ["task3", 200,
+       "desc3"]

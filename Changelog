@@ -1,0 +1,9 @@
+0.1 26/11/2024
+——————————————
+- DB management
+- Stars management (additions, deletions, listing, stats)
+- Rewards management (additions, deletions, listing)
+- Splitting the script into multiple parts
+- Multiuser implementation (one instance can connect to multiple servers)
+- Configuration in YAML
+- Localization of the bot’s messages

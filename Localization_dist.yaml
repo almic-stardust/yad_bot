@@ -1,0 +1,145 @@
+# You must restart the bot if you modify this file.
+
+English:
+
+  ####################
+  # Stars management #
+  ####################
+
+  stars_in_message_just_one:
+    "a"
+  stars_in_message_several:
+    "{User_nick} received {Star_count} stars at once"
+  stars_in_message:
+    "{Bot_owner} distributed {Number} stars in [this message]({Message_link})"
+  stars_deleting_message:
+    "{Bot_owner} removed one or more stars"
+  stars_adding_reaction:
+    "{Bot_owner} distributed a star on [this message]({Message_link})"
+  stars_deleting_reaction:
+    "{Bot_owner} removed a star reaction"
+  stars_not_bot_owner:
+    "{User_nick} can't distribute stars, only {Bot_owner} can"
+  stars_help: |
+    !command1 = desc1
+    !command2 = desc2
+    !command3 = desc3
+  stars_revoke:
+    "{Bot_owner} removed {Stars_to_revoke} stars. The total was {Old_balance} stars, now there are only {Current_balance}"
+  stars_revoke_number_requiered:
+    "You must give a number of stars to remove"
+  stars_revoke_positive_number:
+    "The number of stars to remove must be greater than zero"
+  stars_revoke_denied:
+    "Only {Bot_owner} can remove stars"
+  stars_balance:
+    "{User_nick} has currently {Current_balance} stars, has received a total of {Sum_given_stars} stars, and have used {Sum_rewards_used} of them"
+  stars_list_unknown_command:
+    "{Subcommand} isn't a valid command"
+  stars_list_no_star_yet:
+    "Zero star in the DB"
+  stars_stats:
+    "{User_nick} received {Daily Average} stars/day and {Weekly Average} stars/week"
+
+  ######################
+  # Rewards management #
+  ######################
+
+  rewards_help: |
+    !command1 = desc1
+    !command2 = desc2
+    !command3 = desc3
+  rewards_not_present_error:
+    "Rewards not present"
+  rewards_record_missing_code:
+    "You must give a reward code"
+  rewards_record_no_reward_listed:
+    "{User_nick} has no reward"
+  rewards_record_unknown_reward:
+    "{Subcommand} isn't a valid reward"
+  rewards_record_insufficient_balance:
+    "With only {Current_balance} stars, there isn't enough for a reward that costs {Cost} stars"
+  rewards_record_registered:
+    "The reward is registered"
+  rewards_record_denied:
+	"Only {Bot_owner} can distribute rewards"
+  rewards_deleting_message:
+    "{Bot_owner} removed a reward"
+  rewards_list_unknown_command:
+    "{Subcommand} isn't a valid command"
+  rewards_list_no_reward_yet:
+    "No reward registered"
+
+  ########
+  # Misc #
+  ########
+
+  roll_error:
+    "Format has to be in NdN"
+
+
+
+French:
+
+  stars_in_message_just_one:
+    "une"
+  stars_in_message_several:
+    "{User_nick} a reçu {Star_count} étoiles d'un seul coup"
+  stars_in_message:
+    "{Bot_owner} a distribué {Number} étoiles dans [ce message]({Message_link})"
+  stars_deleting_message:
+    "{Bot_owner} a retiré une ou plusieurs étoiles"
+  stars_adding_reaction:
+    "{Bot_owner} a distribué une étoile sur [ce message]({Message_link})"
+  stars_deleting_reaction:
+    "{Bot_owner} a retiré une réaction étoilée"
+  stars_not_bot_owner:
+    "{User_nick} ne peut pas distribuer des étoiles, seul {Bot_owner} peut le faire"
+  stars_help: |
+    !command1 = desc1
+    !command2 = desc2
+    !command3 = desc3
+  stars_revoke:
+    "{Bot_owner} a enlevé {Stars_to_revoke} étoiles. Le total était de {Old_balance} étoiles, maintenant il est de {Current_balance}"
+  stars_revoke_number_requiered:
+    "Vous devez donner un nombre d'étoiles à enlever"
+  stars_revoke_positive_number:
+    "Le nombre d'étoiles à enlever doit être positif"
+  stars_revoke_denied:
+    "Seul {Bot_owner} peut enlever des étoiles"
+  stars_balance:
+    "{User_nick} a actuellement {Current_balance} étoiles, a reçu un total de {Sum_given_stars} étoiles, et en a utilisé {Sum_rewards_used}"
+  stars_list_unknown_command:
+    "{Subcommand} n'est pas une commande valide"
+  stars_list_no_star_yet:
+    "Zéro étoile dans la BdD"
+  stars_stats:
+    "{User_nick} a reçu {Daily Average} étoiles/jour, et {Weekly Average} étoiles/semaine"
+
+  rewards_help: |
+    !command1 = desc1
+    !command2 = desc2
+    !command3 = desc3
+  rewards_not_present_error:
+    "Aucune récompense présente"
+  rewards_record_missing_code:
+    "Vous devez donner un code de récompense"
+  rewards_record_no_reward_listed:
+    "{User_nick} n'a pas de récompense"
+  rewards_record_unknown_reward:
+    "{Subcommand} n'est pas une commande valide"
+  rewards_record_insufficient_balance:
+    "Avec seulement {Current_balance} étoiles, il n'y a pas assez pour une récompense qui coûte {Cost} étoiles"
+  rewards_record_registered:
+    "La récompense est enregistrée"
+  rewards_record_denied:
+	"Seul {Bot_owner} peut distributer des récompenses"
+  rewards_deleting_message:
+    "{Bot_owner} a retiré une récompense"
+  rewards_list_unknown_command:
+    "{Subcommand} n'est pas une commande valide"
+  rewards_list_no_reward_yet:
+    "Aucune récompense enregistrée"
+
+  roll_error:
+    "Le format doit être NdN"
