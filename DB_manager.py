@@ -57,7 +57,7 @@ def Remove_star(User, Message_id):
 def Remove_message(Message_id):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
-	Message_subject = Concerned_user = None
+	Message_object = Concerned_user = None
 	try:
 		# Get a list of all tables in the DB
 		Cursor.execute("SHOW TABLES")
@@ -73,13 +73,13 @@ def Remove_message(Message_id):
 					# The name of the concerned user is the prefix of the table
 					Concerned_user = Table.split('_')[0]
 					if '_stars' in Table:
-						Message_subject = "Stars"
+						Message_object = "Stars"
 					elif '_rewards' in Table:
-						Message_subject = "Reward"
+						Message_object = "Reward"
 					Cursor.execute(f"DELETE FROM {Table} WHERE message_id = %s", (Message_id,))
 					Connection.commit()
 					break
-		return Concerned_user, Message_subject
+		return Concerned_user, Message_object
 	finally:
 		Cursor.close()
 		Connection.close()

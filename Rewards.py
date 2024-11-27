@@ -10,6 +10,8 @@ import DB_manager
 async def rewards(Context):
 	"""If no subcommand is invoked, display the available rewards"""
 	if not Context.invoked_subcommand:
+		# Multiuser debug
+		print("[!rewards]")
 		User = Discord_related.Determine_user(Context.message)
 		if User:
 			Localized_replies = L10n[User['language']]
@@ -22,10 +24,12 @@ async def rewards(Context):
 				for Message in Discord_related.Split_reply(Display_rewards):
 					await Context.send(Message)
 			else:
-				await Chan.send(Localized_replies['rewards_not_present_error'])
+				await Context.send(Localized_replies['rewards_not_present_error'])
 
 @rewards.command(name="help")
 async def _help(Context):
+	# Multiuser debug
+	print("[!rewards help]")
 	User = Discord_related.Determine_user(Context.message)
 	if User:
 		Localized_replies = L10n[User['language']]
@@ -36,6 +40,8 @@ async def _help(Context):
 @rewards.command(name="record")
 async def _record(Context, Subcommand: str = None):
 	"""Command to register a reward"""
+	# Multiuser debug
+	print("[!rewards record]")
 	User = Discord_related.Determine_user(Context.message)
 	if User:
 		Localized_replies = L10n[User['language']]
@@ -75,6 +81,8 @@ async def _record(Context, Subcommand: str = None):
 async def _list(Context, Subcommand: str = None):
 	"""Displays a list of all 🌟 in the DB, with their date and a link to the message"""
 	Send_as_DM = False
+	# Multiuser debug
+	print("[!rewards list]")
 	User = Discord_related.Determine_user(Context.message)
 	if User:
 		Localized_replies = L10n[User['language']]

@@ -45,7 +45,7 @@ def Split_reply(Reply):
 
 def Determine_user(Message):
 	User = None
-	Server = Message.guild.id
+	Server_id = Message.guild.id if Message.guild else 0
 	Author_message = Message.author.name
 	# If the message was sent by the bot owner, check if it’s a reply/highlight targeting a user
 	if Author_message == Users['bot_owner']['discord_username']:
@@ -56,6 +56,8 @@ def Determine_user(Message):
 				if Replied_user == User_data['discord_username'] and Name != "bot_owner":
 					User = User_data
 					User['name'] = Name
+					# Multiuser debug
+					print(f"{Name} (determined by reply)")
 					break
 		# If it’s a highlight
 		elif Message.mentions:
@@ -64,6 +66,8 @@ def Determine_user(Message):
 					if Mention.name == User_data['discord_username'] and Name != "bot_owner":
 						User = User_data
 						User['name'] = Name
+						# Multiuser debug
+						print(f"{Name} (determined by mention)")
 						break
 	# If the message was sent by one of the users, then it’s that user who is concerned
 	else:
@@ -71,16 +75,20 @@ def Determine_user(Message):
 			if Author_message == User_data['discord_username']:
 				User = User_data
 				User['name'] = Name
+				# Multiuser debug
+				print(f"{Name} (determined by user sent)")
 				break
 	# If the previous methods have not managed to determine the user, we look if we’re on the main
 	# server of one of the users (except for the bot owner)
 	if not User:
 		for Name, User_data in Users.items():
 			if Name != "bot_owner":
-				if Server == User_data['main_server']:
+				if Server_id == User_data['main_server']:
 					User = User_data
 					User['name'] = Name
+					# Multiuser debug
+					print(f"{Name} (determined by server)")
 					break
 	if not User:
-		print("Wait, I’m confused. I can't figure out which user is concerned!")
+		print("Error: Can't figure which user is concerned")
 	return User

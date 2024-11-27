@@ -12,61 +12,57 @@ import DB_manager
 async def on_raw_reaction_add(Payload):
 	"""When a 🌟 reaction is added to a message"""
 	if str(Payload.emoji) == "🌟":
-		try:
-			# Retrieving the info from the bot’s cache, without connecting to discord’s servers. No
-			# network request = get_guild() is a synchronous function
-			Server = bot.get_guild(Payload.guild_id)
-			# We use 0 if it’s a DM
-			Server_id = Payload.guild_id if Server else 0
-			# Retrieving the info from discord’s servers. Network request = so fetch_user(),
-			# fetch_channel() and fetch_message() are asynchronous functions
-			Author_reaction = await bot.fetch_user(Payload.user_id)
-			Channel = await bot.fetch_channel(Payload.channel_id)
-			Message = await Channel.fetch_message(Payload.message_id)
-			User = Discord_related.Determine_user(Message)
-			if User:
-				Localized_replies = L10n[User['language']]
-				if Author_reaction.name == Users['bot_owner']['discord_username']:
-					DB_manager.Register_star(User, Server_id, Channel.id, Message.id, 1)
-					if Config['Log_chan']:
-						Chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), Config['Log_chan'])
-						if Chan:
-							Message_link = f"https://discord.com/channels/{Message.guild.id}/{Message.channel.id}/{Message.id}"
-							await Chan.send(Localized_replies['stars_adding_reaction'].format(Bot_owner=User['bot_owner'], Message_link=Message_link))
-					else:
-						print(f"Can’t send in #{Config['Log_chan']}")
+		Author_reaction = await bot.fetch_user(Payload.user_id)
+		Server = await bot.get_guild(Payload.guild_id)
+		Server_id = Payload.guild_id if Server else 0
+		Origine_chan = await bot.fetch_channel(Payload.channel_id)
+		Message = await Origin_chan.fetch_message(Payload.message_id)
+		# Multiuser debug
+		print("[on_raw_reaction_add]")
+		User = Discord_related.Determine_user(Message)
+		if User:
+			Localized_replies = L10n[User['language']]
+			if Author_reaction.name == Users['bot_owner']['discord_username']:
+				DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, 1)
+				if User['log_chan']:
+					Server = await bot.get_guild(User['main_server'])
+					Log_chan = await Discord_related.Get_chan(Server, User['log_chan'])
+					if Log_chan:
+						Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
+						await Log_chan.send(Localized_replies['stars_adding_reaction'].format(Bot_owner=User['bot_owner'], Message_link=Message_link))
 				else:
-					await Channel.send(Localized_replies['stars_not_bot_owner'].format(Bot_owner=User['bot_owner'], User_nick=User['nick']))
-
-		except Exception as Error:
-			print(f"Error: [on_raw_reaction_add] {Error}")
+					print(f"Error: Can’t send in #{User['log_chan']}")
+			else:
+				await Origin_chan.send(Localized_replies['stars_not_bot_owner'].format(Bot_owner=User['bot_owner'], User_nick=User['nick']))
 
 @bot.event
 async def on_raw_reaction_remove(Payload):
 	"""When a 🌟 reaction is removed from a message (even if it’s not in the bot’s cache)"""
 	if str(Payload.emoji) == "🌟":
-		try:
-			Author_reaction = await bot.fetch_user(Payload.user_id)
-			if Author_reaction.name == Users['bot_owner']['discord_username']:
-				Channel = await bot.fetch_channel(Payload.channel_id)
-				Message = await Channel.fetch_message(Payload.message_id)
-				User = Discord_related.Determine_user(Message)
-				if User:
-					DB_manager.Remove_star(User, Payload.message_id)
-					if Config['Log_chan']:
-						Chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), Config['Log_chan'])
-						if Chan:
-							Localized_replies = L10n[User['language']]
-							await Chan.send(Localized_replies['stars_deleting_reaction'].format(Bot_owner=User['bot_owner']))
-					else:
-						print(f"Can’t send in #{Config['Log_chan']}")
-		except Exception as Error:
-			print(f"Error: [on_raw_reaction_remove] {Error}")
+		Author_reaction = await bot.fetch_user(Payload.user_id)
+		if Author_reaction.name == Users['bot_owner']['discord_username']:
+			Origin_chan = await bot.fetch_channel(Payload.channel_id)
+			Message = await Origin_chan.fetch_message(Payload.message_id)
+			# Multiuser debug
+			print("[on_raw_reaction_remove]")
+			User = Discord_related.Determine_user(Message)
+			if User:
+				DB_manager.Remove_star(User, Payload.message_id)
+				if User['log_chan']:
+					Server = await bot.get_guild(User['main_server'])
+					Log_chan = await Discord_related.Get_chan(Server, User['log_chan'])
+					if Log_chan:
+						Localized_replies = L10n[User['language']]
+						await Log_chan.send(Localized_replies['stars_deleting_reaction'].format(Bot_owner=User['bot_owner']))
+				else:
+					print(f"Error: Can’t send in #{User['log_chan']}")
 	
 @bot.group()
 async def stars(Context):
 	"""If no subcommand is invoked, display the current balance of 🌟 in the DB"""
 	if not Context.invoked_subcommand:
+		# Multiuser debug
+		print("[!stars]")
 		User = Discord_related.Determine_user(Context.message)
 		if User:
 			Localized_replies = L10n[User['language']]
@@ -76,6 +72,8 @@ async def stars(Context):
 
 @stars.command(name="help")
 async def _help(Context):
+	# Multiuser debug
+	print("[!stars help]")
 	User = Discord_related.Determine_user(Context.message)
 	if User:
 		Localized_replies = L10n[User['language']]
@@ -86,6 +84,8 @@ async def _help(Context):
 @stars.command(name="revoke")
 async def _revoke(Context, Stars_to_revoke: int = None):
 	"""Revokes a specified number of stars by adding a negative entry in the DB"""
+	# Multiuser debug
+	print("[!stars revoke]")
 	User = Discord_related.Determine_user(Context.message)
 	if User:
 		Localized_replies = L10n[User['language']]
@@ -108,6 +108,8 @@ async def _revoke(Context, Stars_to_revoke: int = None):
 async def _list(Context, Subcommand: str = None):
 	"""Displays a list of all 🌟 in the DB, with their date and a link to the message"""
 	Send_as_DM = False
+	# Multiuser debug
+	print("[!stars list]")
 	User = Discord_related.Determine_user(Context.message)
 	if User:
 		Localized_replies = L10n[User['language']]
@@ -146,6 +148,8 @@ async def _list(Context, Subcommand: str = None):
 
 @stars.command(name="stats")
 async def _stats(Context):
+	# Multiuser debug
+	print("[!stars stats]")
 	User = Discord_related.Determine_user(Context.message)
 	if User:
 		Localized_replies = L10n[User['language']]

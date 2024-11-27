@@ -3,9 +3,6 @@
 # Your discord token. See https://discordpy.readthedocs.io/en/stable/discord.html
 Token: ""
 
-# If you want the bot’s actions logged in a dedicated channel. Otherwise, comment it out.
-Log_chan: "bot-log"
-
 DB_config:
   host:               ""
   user:               ""
@@ -26,9 +23,11 @@ Users:
     # US time format "%a %m/%d %I:%M %p"
     timeformat:       ""
     nick:             ""
+    discord_username: ""
     main_server:      0000000000000000000
     main_chan:        ""
-    discord_username: ""
+    # If you want the bot’s actions logged in a dedicated channel. Otherwise, comment it out.
+    log_chan:         "bot-log"
     timezone:         ""
     reminders:        
       - ["reminder1", "reminder2"]
@@ -39,9 +38,10 @@ Users:
     language:         ""
     timeformat:       ""
     nick:             ""
+    discord_username: ""
     main_server:      0000000000000000000
     main_chan:        ""
-    discord_username: ""
+    log_chan:         "bot-log"
     timezone:         ""
   user3:
     birthday:         AAAA-MM-JJ
@@ -50,9 +50,10 @@ Users:
     language:         ""
     timeformat:       ""
     nick:             ""
+    discord_username: ""
     main_server:      0000000000000000000
     main_chan:        ""
-    discord_username: ""
+    log_chan:         "bot-log"
     timezone:         ""
     reminders:        
       - ["reminder1"]
