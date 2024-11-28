@@ -37,10 +37,9 @@ async def on_message(Message):
 				Origin_chan = Message.channel
 				DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, Star_count)
 				if Star_count > 1:
-					await Origin_chan.send(Localized_replies['stars_in_message_several'].format(Star_count=Star_count, User_nick=User['nick']))
+					await Origin_chan.send(Localized_replies['stars_in_message_several'].format(Bot_owner=User['bot_owner'], Star_count=Star_count, User_nick=User['nick']))
 				if User['log_chan']:
-					Server = await bot.get_guild(User['main_server'])
-					Log_chan = await Discord_related.Get_chan(Server, User['log_chan'])
+					Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
 					if Log_chan:
 						Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
 						if Star_count == 1:
@@ -61,11 +60,10 @@ async def on_raw_message_delete(Payload):
 	Concerned_user, Message_object = DB_manager.Remove_message(Payload.message_id)
 	# Multiuser debug
 	print("[on_raw_message_delete]")
-	print(f"{Concerned_user} (without Discord_related.Determine_user)")
-	if Users[Concerned_user]['log_chan']:
+	print(f"{Concerned_user} (determined directly in the function)")
+	if Concerned_user and Users[Concerned_user]['log_chan']:
 		User = Users[Concerned_user]
-		Server = await bot.get_guild(User['main_server'])
-		Log_chan = await Discord_related.Get_chan(Server, User['log_chan'])
+		Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
 		if Log_chan:
 			Localized_replies = L10n[User['language']]
 			if Message_object == "Stars":

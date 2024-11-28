@@ -17,44 +17,45 @@ Users:
   user1:
     birthday:         AAAA-MM-JJ
     start_date:       AAAA-MM-JJ
+    nick:             ""
+    discord_username: ""
     bot_owner:        ""
     language:         "English"
     # Europe time format "%a %d/%m %H:%M"
     # US time format "%a %m/%d %I:%M %p"
     timeformat:       ""
-    nick:             ""
-    discord_username: ""
+	# See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    timezone:         ""
     main_server:      0000000000000000000
     main_chan:        ""
     # If you want the bot’s actions logged in a dedicated channel. Otherwise, comment it out.
     log_chan:         "bot-log"
-    timezone:         ""
     reminders:        
       - ["reminder1", "reminder2"]
   user2:
     birthday:         AAAA-MM-JJ
     start_date:       AAAA-MM-JJ
+    nick:             ""
+    discord_username: ""
     bot_owner:        ""
     language:         ""
     timeformat:       ""
-    nick:             ""
-    discord_username: ""
+    timezone:         ""
     main_server:      0000000000000000000
     main_chan:        ""
     log_chan:         "bot-log"
-    timezone:         ""
   user3:
     birthday:         AAAA-MM-JJ
     start_date:       AAAA-MM-JJ
+    nick:             ""
+    discord_username: ""
     bot_owner:        ""
     language:         ""
     timeformat:       ""
-    nick:             ""
-    discord_username: ""
+    timezone:         ""
     main_server:      0000000000000000000
     main_chan:        ""
     log_chan:         "bot-log"
-    timezone:         ""
     reminders:        
       - ["reminder1"]
 

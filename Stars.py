@@ -13,9 +13,8 @@ async def on_raw_reaction_add(Payload):
 	"""When a 🌟 reaction is added to a message"""
 	if str(Payload.emoji) == "🌟":
 		Author_reaction = await bot.fetch_user(Payload.user_id)
-		Server = await bot.get_guild(Payload.guild_id)
-		Server_id = Payload.guild_id if Server else 0
-		Origine_chan = await bot.fetch_channel(Payload.channel_id)
+		Server_id = Payload.guild_id if bot.get_guild(Payload.guild_id) else 0
+		Origin_chan = await bot.fetch_channel(Payload.channel_id)
 		Message = await Origin_chan.fetch_message(Payload.message_id)
 		# Multiuser debug
 		print("[on_raw_reaction_add]")
@@ -25,8 +24,7 @@ async def on_raw_reaction_add(Payload):
 			if Author_reaction.name == Users['bot_owner']['discord_username']:
 				DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, 1)
 				if User['log_chan']:
-					Server = await bot.get_guild(User['main_server'])
-					Log_chan = await Discord_related.Get_chan(Server, User['log_chan'])
+					Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
 					if Log_chan:
 						Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
 						await Log_chan.send(Localized_replies['stars_adding_reaction'].format(Bot_owner=User['bot_owner'], Message_link=Message_link))
@@ -49,8 +47,7 @@ async def on_raw_reaction_remove(Payload):
 			if User:
 				DB_manager.Remove_star(User, Payload.message_id)
 				if User['log_chan']:
-					Server = await bot.get_guild(User['main_server'])
-					Log_chan = await Discord_related.Get_chan(Server, User['log_chan'])
+					Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
 					if Log_chan:
 						Localized_replies = L10n[User['language']]
 						await Log_chan.send(Localized_replies['stars_deleting_reaction'].format(Bot_owner=User['bot_owner']))
@@ -140,6 +137,8 @@ async def _list(Context, Subcommand: str = None):
 			Stars_list.append(Line)
 		# Reverse the list, to show the oldest first and the most recent last
 		Stars_list.reverse()
+		# Split_reply() has a general use case, so its input is a single string
+		Stars_list = "\n".join(Stars_list)
 		for Message in Discord_related.Split_reply(Stars_list):
 			if Send_as_DM:
 				await Context.author.send(Message)

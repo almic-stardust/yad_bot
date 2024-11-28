@@ -9,7 +9,7 @@ English:
   stars_in_message_just_one:
     "a"
   stars_in_message_several:
-    "{User_nick} received {Star_count} stars at once"
+    "{Bot_owner} gave {Star_count} stars to {User_nick} at once"
   stars_in_message:
     "{Bot_owner} distributed {Number} stars in [this message]({Message_link})"
   stars_deleting_message:
