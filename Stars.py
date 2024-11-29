@@ -86,20 +86,21 @@ async def _revoke(Context, Stars_to_revoke: int = None):
 	User = Discord_related.Determine_user(Context.message)
 	if User:
 		Localized_replies = L10n[User['language']]
-		if not Stars_to_revoke:
-			await Context.send(Localized_replies['stars_revoke_number_requiered'])
+		if Context.author.name != Users['bot_owner']['discord_username']:
+			await Context.send(Localized_replies['stars_revoke_denied'].format(Bot_owner=User['bot_owner']))
 			return
-		if Stars_to_revoke <= 0:
+		if not Stars_to_revoke or Stars_to_revoke <= 0:
 			await Context.send(Localized_replies['stars_revoke_positive_number'])
 			return
-		if Context.author.name == Users['bot_owner']['discord_username']:
-			Server_id = Context.guild.id if Context.guild else 0
-			Sum_given_stars, Sum_rewards_used = DB_manager.Get_current_balance(User)
-			Old_balance = Sum_given_stars - Sum_rewards_used
-			DB_manager.Register_star(User, Server_id, Context.channel.id, Context.message.id, -Stars_to_revoke)
-			await Context.send(Localized_replies['stars_revoke'].format(Bot_owner=User['bot_owner'], Stars_to_revoke=Stars_to_revoke, Old_balance=Old_balance, Current_balance=Old_balance-Stars_to_revoke))
-		else:
-			await Context.send(Localized_replies['stars_revoke_denied'].format(Bot_owner=User['bot_owner']))
+		Server_id = Context.guild.id if Context.guild else 0
+		Sum_given_stars, Sum_rewards_used = DB_manager.Get_current_balance(User)
+		Old_balance = Sum_given_stars - Sum_rewards_used
+		DB_manager.Register_star(User, Server_id, Context.channel.id, Context.message.id, -Stars_to_revoke)
+		if Stars_to_revoke == 1:
+			Number = Localized_replies['stars_just_one']
+		elif Stars_to_revoke > 1:
+			Number = Stars_to_revoke
+		await Context.send(Localized_replies['stars_revoke'].format(Bot_owner=User['bot_owner'], Number=Number, Old_balance=Old_balance, Current_balance=Old_balance-Stars_to_revoke))
 
 @stars.command(name="list")
 async def _list(Context, Subcommand: str = None):

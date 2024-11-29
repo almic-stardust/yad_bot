@@ -43,9 +43,9 @@ async def on_message(Message):
 					if Log_chan:
 						Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
 						if Star_count == 1:
-							Number = Localized_replies['stars_in_message_just_one']
+							Number = Localized_replies['stars_just_one']
 						elif Star_count > 1:
-							Number = str(Star_count)
+							Number = Star_count
 						await Log_chan.send(Localized_replies['stars_in_message'].format(Bot_owner=User['bot_owner'], Number=Number, Message_link=Message_link))
 					else:
 						print(f"Error: Can’t send in #{User['log_chan']}")

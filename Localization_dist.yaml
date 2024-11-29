@@ -6,12 +6,12 @@ English:
   # Stars management #
   ####################
 
-  stars_in_message_just_one:
+  stars_just_one:
     "a"
   stars_in_message_several:
     "{Bot_owner} gave {Star_count} stars to {User_nick} at once"
   stars_in_message:
-    "{Bot_owner} distributed {Number} stars in [this message]({Message_link})"
+    "{Bot_owner} distributed {Number} star(s) in [this message]({Message_link})"
   stars_deleting_message:
     "{Bot_owner} removed one or more stars"
   stars_adding_reaction:
@@ -25,15 +25,13 @@ English:
     !command2 = desc2
     !command3 = desc3
   stars_revoke:
-    "{Bot_owner} removed {Stars_to_revoke} stars. The total was {Old_balance} stars, now there are only {Current_balance}"
-  stars_revoke_number_requiered:
-    "You must give a number of stars to remove"
+    "{Bot_owner} removed {Number} star(s). The total was {Old_balance} star(s), now there are only {Current_balance}"
   stars_revoke_positive_number:
-    "The number of stars to remove must be greater than zero"
+	"You must give a number of stars to remove, which must be greater than zero"
   stars_revoke_denied:
     "Only {Bot_owner} can remove stars"
   stars_balance:
-    "{User_nick} has currently {Current_balance} stars, has received a total of {Sum_given_stars} stars, and have used {Sum_rewards_used} of them"
+    "{User_nick} has currently {Current_balance} star(s), has received a total of {Sum_given_stars} star(s), and have used {Sum_rewards_used} of them"
   stars_list_unknown_command:
     "{Subcommand} isn't a valid command"
   stars_list_no_star_yet:
@@ -58,7 +56,7 @@ English:
   rewards_record_unknown_reward:
     "{Subcommand} isn't a valid reward"
   rewards_record_insufficient_balance:
-    "With only {Current_balance} stars, there isn't enough for a reward that costs {Cost} stars"
+    "With only {Current_balance} star(s), there isn't enough for a reward that costs {Cost}"
   rewards_record_registered:
     "The reward is registered"
   rewards_record_denied:
@@ -81,12 +79,12 @@ English:
 
 French:
 
-  stars_in_message_just_one:
+  stars_just_one:
     "une"
   stars_in_message_several:
     "{User_nick} a reçu {Star_count} étoiles d'un seul coup"
   stars_in_message:
-    "{Bot_owner} a distribué {Number} étoiles dans [ce message]({Message_link})"
+    "{Bot_owner} a distribué {Number} étoile(s) dans [ce message]({Message_link})"
   stars_deleting_message:
     "{Bot_owner} a retiré une ou plusieurs étoiles"
   stars_adding_reaction:
@@ -100,15 +98,13 @@ French:
     !command2 = desc2
     !command3 = desc3
   stars_revoke:
-    "{Bot_owner} a enlevé {Stars_to_revoke} étoiles. Le total était de {Old_balance} étoiles, maintenant il est de {Current_balance}"
-  stars_revoke_number_requiered:
-    "Vous devez donner un nombre d'étoiles à enlever"
+    "{Bot_owner} a enlevé {Number} étoile(s). Le total était de {Old_balance} étoile(s), maintenant il est de {Current_balance}"
   stars_revoke_positive_number:
-    "Le nombre d'étoiles à enlever doit être positif"
+    "Vous devez donner un nombre d'étoiles à enlever, qui doit être supérieur à zéro"
   stars_revoke_denied:
     "Seul {Bot_owner} peut enlever des étoiles"
   stars_balance:
-    "{User_nick} a actuellement {Current_balance} étoiles, a reçu un total de {Sum_given_stars} étoiles, et en a utilisé {Sum_rewards_used}"
+    "{User_nick} a actuellement {Current_balance} étoile(s), a reçu un total de {Sum_given_stars} étoile(s), et en a utilisé {Sum_rewards_used}"
   stars_list_unknown_command:
     "{Subcommand} n'est pas une commande valide"
   stars_list_no_star_yet:
@@ -129,7 +125,7 @@ French:
   rewards_record_unknown_reward:
     "{Subcommand} n'est pas une commande valide"
   rewards_record_insufficient_balance:
-    "Avec seulement {Current_balance} étoiles, il n'y a pas assez pour une récompense qui coûte {Cost} étoiles"
+    "Avec seulement {Current_balance} étoile(s), il n'y a pas assez pour une récompense qui coûte {Cost}"
   rewards_record_registered:
     "La récompense est enregistrée"
   rewards_record_denied:
