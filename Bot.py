@@ -36,8 +36,8 @@ async def on_message(Message):
 				Server_id = Message.guild.id if Message.guild else 0
 				Origin_chan = Message.channel
 				DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, Star_count)
-				if Star_count > 1:
-					await Origin_chan.send(Localized_replies['stars_in_message_several'].format(Bot_owner=User['bot_owner'], Star_count=Star_count, User_nick=User['nick']))
+				#if Star_count > 1:
+				#	await Origin_chan.send(Localized_replies['stars_in_message_several'].format(Bot_owner=User['bot_owner'], Star_count=Star_count, User_nick=User['nick']))
 				if User['log_chan']:
 					Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
 					if Log_chan:

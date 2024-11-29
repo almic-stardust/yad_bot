@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import discord
+import os
 from discord.ext import commands
 from Config_manager import Users
 
@@ -57,7 +58,7 @@ def Determine_user(Message):
 					User = User_data
 					User['name'] = Name
 					# Multiuser debug
-					print(f"{Name} (determined by reply)")
+					print(f"{Name} (reply)")
 					break
 		# If it’s a highlight
 		elif Message.mentions:
@@ -67,7 +68,7 @@ def Determine_user(Message):
 						User = User_data
 						User['name'] = Name
 						# Multiuser debug
-						print(f"{Name} (determined by mention)")
+						print(f"{Name} (mention)")
 						break
 	# If the message was sent by one of the users, then it’s that user who is concerned
 	else:
@@ -76,7 +77,7 @@ def Determine_user(Message):
 				User = User_data
 				User['name'] = Name
 				# Multiuser debug
-				print(f"{Name} (determined by user sent)")
+				print(f"{Name} (user sent)")
 				break
 	# If the previous methods have not managed to determine the user, we look if we’re on the main
 	# server of one of the users (except for the bot owner)
@@ -87,8 +88,24 @@ def Determine_user(Message):
 					User = User_data
 					User['name'] = Name
 					# Multiuser debug
-					print(f"{Name} (determined by server)")
+					print(f"{Name} (server)")
 					break
+	# If the previous methods have not managed to determine the user, we check if the bot’s
+	# directory contains a file Current_user and it’s not empty. In this case, we assume that it
+	# contains the name of the current user
 	if not User:
-		print("Error: Can't figure which user is concerned")
+		if os.path.isfile("Current_user"):
+			try:
+				with open("Current_user", "r", encoding="utf-8") as File:
+					Current_user = File.read().strip()
+					if Current_user and Current_user in Users:
+						User = Users[Current_user]
+						User['name'] = Current_user
+						# Multiuser debug
+						print(f"{Current_user} (file)")
+						return User
+			except Exception as e:
+				print(f"Error: Can’t read the file Current_user: {e}")
+		else:
+			print("Error: Can't determine the user and the file Current_user isn’t present")
 	return User

@@ -21,6 +21,8 @@ async def rewards(Context):
 				for Reward in Rewards_available[User['name']]:
 					Display_rewards.append(f"{Index}. ({Reward[1]} 🌟) {Reward[2]} [{Reward[0]}]")
 					Index += 1
+				# Split_reply() has a general use case, so its input is a single string
+				Display_rewards = "\n".join(Display_rewards)
 				for Message in Discord_related.Split_reply(Display_rewards):
 					await Context.send(Message)
 			else:
