@@ -8,7 +8,7 @@ import DB_manager
 
 @bot.group()
 async def rewards(Context):
-	"""If no subcommand is invoked, display the available rewards"""
+	# If no subcommand is invoked, display the available rewards
 	if not Context.invoked_subcommand:
 		# Multiuser debug
 		print("[!rewards]")
@@ -29,7 +29,7 @@ async def rewards(Context):
 				await Context.send(Localized_replies['rewards_not_present_error'])
 
 @rewards.command(name="help")
-async def _help(Context):
+async def Rewards_help(Context):
 	# Multiuser debug
 	print("[!rewards help]")
 	User = Discord_related.Determine_user(Context.message)
@@ -40,8 +40,8 @@ async def _help(Context):
 			await Context.send(Message)
 
 @rewards.command(name="record")
-async def _record(Context, Subcommand: str = None):
-	"""Command to register a reward"""
+async def Rewards_record(Context, Subcommand: str = None):
+	# Register a reward
 	# Multiuser debug
 	print("[!rewards record]")
 	User = Discord_related.Determine_user(Context.message)
@@ -80,8 +80,8 @@ async def _record(Context, Subcommand: str = None):
 			await Context.send(Localized_replies['rewards_record_denied'].format(Bot_owner=User['bot_owner']))
 
 @rewards.command(name="list")
-async def _list(Context, Subcommand: str = None):
-	"""Displays a list of all 🌟 in the DB, with their date and a link to the message"""
+async def Rewards_list(Context, Subcommand: str = None):
+	# Display a list of all 🌟 in the DB, with their date and a link to the message
 	Send_as_DM = False
 	# Multiuser debug
 	print("[!rewards list]")
@@ -110,6 +110,9 @@ async def _list(Context, Subcommand: str = None):
 			Display_rewards.append(f"[{Server_time}]({Message_link}) ({User_time}) {Code} ({Cost} 🌟)")
 		# Reverse the list, to show the oldest first and the most recent last
 		Display_rewards.reverse()
+		# Split_reply() has a general use case, so its input is a single string
+		Display_rewards = "\n".join(Display_rewards)
+
 		for Message in Discord_related.Split_reply(Display_rewards):
 			if Send_as_DM:
 				await Context.author.send(Message)

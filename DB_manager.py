@@ -12,7 +12,6 @@ def Connect_DB():
 		sys.exit(1)
 
 def Register_star(User, Server_id, Channel_id, Message_id, Star_count):
-	"""Register a 🌟 and its references in the DB"""
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
@@ -100,7 +99,6 @@ def Get_stars_list(User, Limit=None):
 		Connection.close()
 
 def Register_reward(User, Server_id, Channel_id, Message_id, Code, Cost):
-	"""Register a reward and its references in the DB"""
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:

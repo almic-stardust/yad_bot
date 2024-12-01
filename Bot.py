@@ -38,7 +38,7 @@ async def on_message(Message):
 				DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, Star_count)
 				#if Star_count > 1:
 				#	await Origin_chan.send(Localized_replies['stars_in_message_several'].format(Bot_owner=User['bot_owner'], Star_count=Star_count, User_nick=User['nick']))
-				if User['log_chan']:
+				if "log_chan" in User:
 					Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
 					if Log_chan:
 						Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
@@ -56,12 +56,12 @@ async def on_message(Message):
 
 @bot.event
 async def on_raw_message_delete(Payload):
-	""" Check if the message has been stored in the DB, and if so remove it"""
+	# Check if the message has been stored in the DB, and if so remove it
 	Concerned_user, Message_object = DB_manager.Remove_message(Payload.message_id)
 	# Multiuser debug
 	print("[on_raw_message_delete]")
-	print(f"{Concerned_user} (determined directly in the function)")
-	if Concerned_user and Users[Concerned_user]['log_chan']:
+	print(f"{Concerned_user} (message deleted)")
+	if Concerned_user and "log_chan" in Users[Concerned_user]:
 		User = Users[Concerned_user]
 		Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
 		if Log_chan:
@@ -80,8 +80,8 @@ async def on_raw_message_delete(Payload):
 
 @bot.event
 async def on_ready():
-	"""Event triggered when the bot has connected to Discord"""
-	print(f"Logged in as {bot.user} (ID: {bot.user.id})")
-	print("——————————————————————————————————————")
+	# Event triggered when the bot has connected to Discord
+	print(f"Logged in as {bot.user}")
+	print("————————————————————————————————————————")
 
 bot.run(Config['Token'])

@@ -7,10 +7,12 @@ from Discord_related import bot
 import Discord_related
 import DB_manager
 
-# We don’t use on_reaction_add() because it doesn’t work for reactions added to messages sent before# the bot was last started (it only considers reactions added to messages in the bot’s cache)
+# We don’t use on_reaction_add() because it only considers reactions added to messages in the bot’s
+# cache. We need on_raw_reaction_add() to handle reactions added to messages sent before the bot was
+# last started
 @bot.event
 async def on_raw_reaction_add(Payload):
-	"""When a 🌟 reaction is added to a message"""
+	# When a 🌟 reaction is added to a message
 	if str(Payload.emoji) == "🌟":
 		Author_reaction = await bot.fetch_user(Payload.user_id)
 		Server_id = Payload.guild_id if bot.get_guild(Payload.guild_id) else 0
@@ -23,19 +25,19 @@ async def on_raw_reaction_add(Payload):
 			Localized_replies = L10n[User['language']]
 			if Author_reaction.name == Users['bot_owner']['discord_username']:
 				DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, 1)
-				if User['log_chan']:
+				if "log_chan" in User:
 					Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
 					if Log_chan:
 						Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
 						await Log_chan.send(Localized_replies['stars_adding_reaction'].format(Bot_owner=User['bot_owner'], Message_link=Message_link))
-				else:
-					print(f"Error: Can’t send in #{User['log_chan']}")
+					else:
+						print(f"Error: Can’t send in #{User['log_chan']}")
 			else:
 				await Origin_chan.send(Localized_replies['stars_not_bot_owner'].format(Bot_owner=User['bot_owner'], User_nick=User['nick']))
 
 @bot.event
 async def on_raw_reaction_remove(Payload):
-	"""When a 🌟 reaction is removed from a message (even if it’s not in the bot’s cache)"""
+	# When a 🌟 reaction is removed from a message, even if it’s not in the bot’s cache
 	if str(Payload.emoji) == "🌟":
 		Author_reaction = await bot.fetch_user(Payload.user_id)
 		if Author_reaction.name == Users['bot_owner']['discord_username']:
@@ -46,17 +48,17 @@ async def on_raw_reaction_remove(Payload):
 			User = Discord_related.Determine_user(Message)
 			if User:
 				DB_manager.Remove_star(User, Payload.message_id)
-				if User['log_chan']:
+				if "log_chan" in User:
 					Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
 					if Log_chan:
 						Localized_replies = L10n[User['language']]
 						await Log_chan.send(Localized_replies['stars_deleting_reaction'].format(Bot_owner=User['bot_owner']))
-				else:
-					print(f"Error: Can’t send in #{User['log_chan']}")
+					else:
+						print(f"Error: Can’t send in #{User['log_chan']}")
 	
 @bot.group()
 async def stars(Context):
-	"""If no subcommand is invoked, display the current balance of 🌟 in the DB"""
+	# If no subcommand is invoked, display the current balance of 🌟 in the DB
 	if not Context.invoked_subcommand:
 		# Multiuser debug
 		print("[!stars]")
@@ -68,7 +70,7 @@ async def stars(Context):
 			await Context.send(Localized_replies['stars_balance'].format(User_nick=User['nick'], Current_balance=Current_balance, Sum_rewards_used=Sum_rewards_used, Sum_given_stars=Sum_given_stars))
 
 @stars.command(name="help")
-async def _help(Context):
+async def Stars_help(Context):
 	# Multiuser debug
 	print("[!stars help]")
 	User = Discord_related.Determine_user(Context.message)
@@ -79,8 +81,8 @@ async def _help(Context):
 			await Context.send(Message)
 
 @stars.command(name="revoke")
-async def _revoke(Context, Stars_to_revoke: int = None):
-	"""Revokes a specified number of stars by adding a negative entry in the DB"""
+async def Stars_revoke(Context, Stars_to_revoke: int = None):
+	# Revoke a specified number of stars by adding a negative entry in the DB
 	# Multiuser debug
 	print("[!stars revoke]")
 	User = Discord_related.Determine_user(Context.message)
@@ -103,8 +105,8 @@ async def _revoke(Context, Stars_to_revoke: int = None):
 		await Context.send(Localized_replies['stars_revoke'].format(Bot_owner=User['bot_owner'], Number=Number, Old_balance=Old_balance, Current_balance=Old_balance-Stars_to_revoke))
 
 @stars.command(name="list")
-async def _list(Context, Subcommand: str = None):
-	"""Displays a list of all 🌟 in the DB, with their date and a link to the message"""
+async def Stars_list(Context, Subcommand: str = None):
+	# Display a list of all 🌟 in the DB, with their date and a link to the message
 	Send_as_DM = False
 	# Multiuser debug
 	print("[!stars list]")
@@ -147,7 +149,7 @@ async def _list(Context, Subcommand: str = None):
 				await Context.send(Message)
 
 @stars.command(name="stats")
-async def _stats(Context):
+async def Stars_stats(Context):
 	# Multiuser debug
 	print("[!stars stats]")
 	User = Discord_related.Determine_user(Context.message)

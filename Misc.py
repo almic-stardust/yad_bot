@@ -7,7 +7,7 @@ import Discord_related
 
 @bot.command()
 async def roll(Context, Dice: str):
-	"""Rolls a dice in NdN format"""
+	# Roll a dice in NdN format
 	# Multiuser debug
 	print("[roll]")
 	User = Discord_related.Determine_user(Context.message)
