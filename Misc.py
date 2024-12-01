@@ -12,11 +12,11 @@ async def roll(Context, Dice: str):
 	print("[roll]")
 	User = Discord_related.Determine_user(Context.message)
 	if User:
-		Localized_replies = L10n[User['language']]
+		Localized_replies = L10n[User["language"]]
 		try:
 			Rolls, Limit = map(int, Dice.split("d"))
 		except Exception:
-			await Context.send(Localized_replies['roll_error'])
+			await Context.send(Localized_replies["roll_error"])
 			return
 		Result = ", ".join(str(random.randint(1, Limit)) for r in range(Rolls))
 		await Context.send(Result)

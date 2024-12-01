@@ -5,7 +5,7 @@ from Config_manager import Config
 
 def Connect_DB():
 	try:
-		Connection = MySQLdb.connect(**Config['DB_config'])
+		Connection = MySQLdb.connect(**Config["DB_config"])
 		return Connection
 	except MySQLdb.Error as Error:
 		print(f"Error: [MariaDB connection] {Error}")
@@ -70,10 +70,10 @@ def Remove_message(Message_id):
 				# If we found an entry matching the deleted message
 				if Result:
 					# The name of the concerned user is the prefix of the table
-					Concerned_user = Table.split('_')[0]
-					if '_stars' in Table:
+					Concerned_user = Table.split("_")[0]
+					if "_stars" in Table:
 						Message_object = "Stars"
-					elif '_rewards' in Table:
+					elif "_rewards" in Table:
 						Message_object = "Reward"
 					Cursor.execute(f"DELETE FROM {Table} WHERE message_id = %s", (Message_id,))
 					Connection.commit()

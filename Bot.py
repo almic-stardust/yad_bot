@@ -27,26 +27,26 @@ async def on_message(Message):
 	print("[on_message]")
 	User = Discord_related.Determine_user(Message)
 	if User:
-		Localized_replies = L10n[User['language']]
+		Localized_replies = L10n[User["language"]]
 		# When a message contains one or several 🌟
 		if "🌟" in Message.content:
 			Star_count = Message.content.count("🌟")
-			if Message.author.name == Users['bot_owner']['discord_username']:
+			if Message.author.name == Users["bot_owner"]["discord_username"]:
 				# We set 0 if it’s a DM
 				Server_id = Message.guild.id if Message.guild else 0
 				Origin_chan = Message.channel
 				DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, Star_count)
 				#if Star_count > 1:
-				#	await Origin_chan.send(Localized_replies['stars_in_message_several'].format(Bot_owner=User['bot_owner'], Star_count=Star_count, User_nick=User['nick']))
+				#	await Origin_chan.send(Localized_replies["stars_in_message_several"].format(Bot_owner=User["bot_owner"], Star_count=Star_count, User_nick=User["nick"]))
 				if "log_chan" in User:
-					Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
+					Log_chan = await Discord_related.Get_chan(bot.get_guild(User["main_server"]), User["log_chan"])
 					if Log_chan:
 						Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
 						if Star_count == 1:
-							Number = Localized_replies['stars_just_one']
+							Number = Localized_replies["stars_just_one"]
 						elif Star_count > 1:
 							Number = Star_count
-						await Log_chan.send(Localized_replies['stars_in_message'].format(Bot_owner=User['bot_owner'], Number=Number, Message_link=Message_link))
+						await Log_chan.send(Localized_replies["stars_in_message"].format(Bot_owner=User["bot_owner"], Number=Number, Message_link=Message_link))
 					else:
 						print(f"Error: Can’t send in #{User['log_chan']}")
 	
@@ -63,13 +63,13 @@ async def on_raw_message_delete(Payload):
 	print(f"{Concerned_user} (message deleted)")
 	if Concerned_user and "log_chan" in Users[Concerned_user]:
 		User = Users[Concerned_user]
-		Log_chan = await Discord_related.Get_chan(bot.get_guild(User['main_server']), User['log_chan'])
+		Log_chan = await Discord_related.Get_chan(bot.get_guild(User["main_server"]), User["log_chan"])
 		if Log_chan:
-			Localized_replies = L10n[User['language']]
+			Localized_replies = L10n[User["language"]]
 			if Message_object == "Stars":
-				Reply = Localized_replies['stars_deleting_message'].format(Bot_owner=User['bot_owner'])
+				Reply = Localized_replies["stars_deleting_message"].format(Bot_owner=User["bot_owner"])
 			if Message_object == "Reward":
-				Reply = Localized_replies['rewards_deleting_message'].format(Bot_owner=User['bot_owner'])
+				Reply = Localized_replies["rewards_deleting_message"].format(Bot_owner=User["bot_owner"])
 			await Log_chan.send(Reply)
 		else:
 			print(f"Error: Can’t send in #{Users['log_chan']}")
@@ -84,4 +84,4 @@ async def on_ready():
 	print(f"Logged in as {bot.user}")
 	print("————————————————————————————————————————")
 
-bot.run(Config['Token'])
+bot.run(Config["Token"])

@@ -9,16 +9,16 @@ import yaml
 with open("Config.yaml", "r") as File:
 	Config = yaml.safe_load(File)
 
-Users = Config['Users']
+Users = Config["Users"]
 for Name, User in Users.items():
 	if Name != "bot_owner":
-		User['name'] = Name
+		User["name"] = Name
 	if "reminders" in User:
-		User['reminders'] = tuple(User['reminders'][0])
+		User["reminders"] = tuple(User["reminders"][0])
 
 Rewards_available = {
 	Name: tuple(tuple(Task) for Task in Tasks)
-	for Name, Tasks in Config['Rewards_available'].items()
+	for Name, Tasks in Config["Rewards_available"].items()
 }
 
 ###############################################################################

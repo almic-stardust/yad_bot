@@ -14,7 +14,7 @@ intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents, help_command=None)
 
 # Can’t remove async, otherwise when on_raw_reaction_add() call this function, we get this error:
-# TypeError: object TextChannel can't be used in 'await' expression
+# “TypeError: object TextChannel can't be used in 'await' expression”
 async def Get_chan(Server, Chan):
 	# Provide a reference to a channel
 	for Channel in Server.text_channels:
@@ -49,12 +49,12 @@ def Determine_user(Message):
 	Server_id = Message.guild.id if Message.guild else 0
 	Author_message = Message.author.name
 	# If the message was sent by the bot owner, check if it’s a reply/highlight targeting a user
-	if Author_message == Users['bot_owner']['discord_username']:
+	if Author_message == Users["bot_owner"]["discord_username"]:
 		# If it’s a reply
 		if Message.reference and Message.reference.resolved:
 			Replied_user = Message.reference.resolved.author.name
 			for Name, User in Users.items():
-				if Replied_user == User['discord_username'] and Name != "bot_owner":
+				if Replied_user == User["discord_username"] and Name != "bot_owner":
 					Determined_user = User
 					# Multiuser debug
 					print(f"{Name} (reply)")
@@ -63,7 +63,7 @@ def Determine_user(Message):
 		elif Message.mentions:
 			for Mention in Message.mentions:
 				for Name, User in Users.items():
-					if Mention.name == User['discord_username'] and Name != "bot_owner":
+					if Mention.name == User["discord_username"] and Name != "bot_owner":
 						Determined_user = User
 						# Multiuser debug
 						print(f"{Name} (mention)")
@@ -71,7 +71,7 @@ def Determine_user(Message):
 	# If the message was sent by one of the users, then it’s that user who is concerned
 	else:
 		for Name, User in Users.items():
-			if Author_message == User['discord_username']:
+			if Author_message == User["discord_username"]:
 				Determined_user = User
 				# Multiuser debug
 				print(f"{Name} (user sent)")
@@ -81,7 +81,7 @@ def Determine_user(Message):
 	if not Determined_user:
 		for Name, User in Users.items():
 			if Name != "bot_owner":
-				if Server_id == User['main_server']:
+				if Server_id == User["main_server"]:
 					Determined_user = User
 					# Multiuser debug
 					print(f"{Name} (server)")
@@ -100,5 +100,5 @@ def Determine_user(Message):
 			except Exception as e:
 				print(f"Error: Can’t read the file Current_user: {e}")
 		else:
-			print("Error: Can't determine the user and the file Current_user isn’t present")
+			print("Error: Can’t determine the user and the file Current_user isn’t present")
 	return Determined_user
