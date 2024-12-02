@@ -3,7 +3,7 @@
 import yaml
 
 ###############################################################################
-# Config file
+# Configuration
 ###############################################################################
 
 with open("Config.yaml", "r") as File:
@@ -13,8 +13,8 @@ Users = Config["Users"]
 for Name, User in Users.items():
 	if Name != "bot_owner":
 		User["name"] = Name
-	if "reminders" in User:
-		User["reminders"] = tuple(User["reminders"][0])
+	if "events" in User:
+		User["events"] = tuple(User["events"][0])
 
 Rewards_available = {
 	Name: tuple(tuple(Task) for Task in Tasks)

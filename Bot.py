@@ -3,6 +3,7 @@
 
 import sys
 import asyncio
+import datetime
 
 from Config_manager import Config, Users, L10n
 from Discord_related import bot
@@ -10,6 +11,7 @@ import Discord_related
 import DB_manager
 import Stars
 import Rewards
+import Events
 import Misc
 
 ###############################################################################
@@ -82,6 +84,17 @@ async def on_raw_message_delete(Payload):
 async def on_ready():
 	# Event triggered when the bot has connected to Discord
 	print(f"Logged in as {bot.user}")
+
+	# Starting the APOD event at the daily time specified in the configuration
+	if "NASA_API_key" in Config and "APOD_time" in Config:
+		@Events.APOD.before_loop
+		async def Waiting_before_APOD():
+			Wanted_time = datetime.datetime.strptime(Config["APOD_time"], "%H:%M").time()
+			Delay = Events.Time_until(Wanted_time)
+			print(f"Delay until APOD task: {Delay}")
+			await asyncio.sleep(Delay.total_seconds())
+		Events.APOD.start()
+
 	print("————————————————————————————————————————")
 
 bot.run(Config["Token"])

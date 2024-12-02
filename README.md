@@ -16,6 +16,7 @@ Dependencies (Debian packages):
 - python3-discord
 - python3-yaml
 - python3-mysqldb
+- python3-requests
 
 #### Database
 

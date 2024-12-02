@@ -3,6 +3,12 @@
 # Your discord token. See https://discordpy.readthedocs.io/en/stable/discord.html
 Token: ""
 
+# If you want the bot to post every day the APOD (NASA’s astronomy picture of the day). Otherwise,
+# comment it out. See https://api.nasa.gov
+NASA_API_key: ""
+
+APOD_time:            "HH:MM"
+
 DB_config:
   host:               ""
   user:               ""
@@ -30,8 +36,8 @@ Users:
     main_chan:        ""
     # If you want the bot’s actions logged in a dedicated channel. Otherwise, comment it out.
     log_chan:         "bot-log"
-    reminders:        
-      - ["reminder1", "reminder2"]
+    events:
+      - ["event1", "event2"]
   user2:
     birthday:         AAAA-MM-JJ
     start_date:       AAAA-MM-JJ
@@ -56,8 +62,8 @@ Users:
     main_server:      0000000000000000000
     main_chan:        ""
     log_chan:         "bot-log"
-    reminders:        
-      - ["reminder1"]
+    events:
+      - ["event1"]
 
 Rewards_available:
   user1:
