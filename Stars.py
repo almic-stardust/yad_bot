@@ -15,25 +15,29 @@ async def on_raw_reaction_add(Payload):
 	# When a 🌟 reaction is added to a message
 	if str(Payload.emoji) == "🌟":
 		Author_reaction = await bot.fetch_user(Payload.user_id)
-		Server_id = Payload.guild_id if bot.get_guild(Payload.guild_id) else 0
 		Origin_chan = await bot.fetch_channel(Payload.channel_id)
-		Message = await Origin_chan.fetch_message(Payload.message_id)
-		# Multiuser debug
-		print("[on_raw_reaction_add]")
-		User = Discord_related.Determine_user(Message)
-		if User:
-			Localized_replies = L10n[User["language"]]
-			if Author_reaction.name == Users["bot_owner"]["discord_username"]:
-				DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, 1)
-				if "log_chan" in User:
-					Log_chan = await Discord_related.Get_chan(bot.get_guild(User["main_server"]), User["log_chan"])
-					if Log_chan:
-						Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
-						await Log_chan.send(Localized_replies["stars_adding_reaction"].format(Bot_owner=User["bot_owner"], Message_link=Message_link))
-					else:
-						print(f"Error: Can’t send in #{User['log_chan']}")
-			else:
-				await Origin_chan.send(Localized_replies["stars_not_bot_owner"].format(Bot_owner=User["bot_owner"], User_nick=User["nick"]))
+		if Author_reaction.name == Users["bot_owner"]["discord_username"]:
+			Server_id = Payload.guild_id if bot.get_guild(Payload.guild_id) else 0
+			Message = await Origin_chan.fetch_message(Payload.message_id)
+			# Multiuser debug
+			print("[on_raw_reaction_add]")
+			User = Discord_related.Determine_user(Message)
+			if User:
+				Localized_replies = L10n[User["language"]]
+				if Author_reaction.name == Users["bot_owner"]["discord_username"]:
+					DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, 1)
+					if "log_chan" in User:
+						Log_chan = await Discord_related.Get_chan(bot.get_guild(User["main_server"]), User["log_chan"])
+						if Log_chan:
+							Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
+							await Log_chan.send(Localized_replies["stars_adding_reaction"].format(Bot_owner=User["bot_owner"], Message_link=Message_link))
+						else:
+							print(f"Error: Can’t send in #{User['log_chan']}")
+		else:
+			for User in Users.values():
+				if Author_reaction.name == User["discord_username"]:
+					Localized_replies = L10n[User["language"]]
+					await Origin_chan.send(Localized_replies["stars_not_bot_owner"].format(Bot_owner=User["bot_owner"], User_nick=User["nick"]))
 
 @bot.event
 async def on_raw_reaction_remove(Payload):

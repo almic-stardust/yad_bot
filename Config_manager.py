@@ -11,8 +11,7 @@ with open("Config.yaml", "r") as File:
 
 Users = Config["Users"]
 for Name, User in Users.items():
-	if Name != "bot_owner":
-		User["name"] = Name
+	User["name"] = Name
 	if "events" in User:
 		User["events"] = tuple(User["events"][0])
 

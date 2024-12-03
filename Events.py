@@ -30,9 +30,9 @@ async def APOD():
 	APOD_json = requests.get(URL)
 	APOD_json.raise_for_status()
 	APOD_json = APOD_json.json()
-	for Name, User in Users.items():
+	for User in Users.values():
 		if "events" in User and "apod" in User["events"]:
-			if "main_chan" in User:
+			if "main_server" in User and "main_chan" in User:
 				Chan = await Discord_related.Get_chan(bot.get_guild(User["main_server"]), User["main_chan"])
 				if Chan:
 					APOD_date = datetime.date.today().strftime("%y%m%d")
@@ -46,4 +46,4 @@ async def APOD():
 				else:
 					print(f"Error: Can’t send in {User['main_chan']}")
 			else:
-				print("Error: Main channel undefined")
+				print("Main channel not found or configured incorrectly")
