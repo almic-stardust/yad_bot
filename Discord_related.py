@@ -58,7 +58,7 @@ def Determine_user(Message):
 				if Replied_user == User["discord_username"] and User["name"] != "bot_owner":
 					Determined_user = User
 					# Multiuser debug
-					print(f"{User['name']} (reply)")
+					print(f"{Determined_user['name']} (reply)")
 					break
 		# If it’s a highlight
 		elif Message.mentions:
@@ -67,24 +67,24 @@ def Determine_user(Message):
 					if Mention.name == User["discord_username"] and User["name"] != "bot_owner":
 						Determined_user = User
 						# Multiuser debug
-						print(f"{User['name']} (mention)")
+						print(f"{Determined_user['name']} (mention)")
 						break
-		# If the message wasn’t a reply or a mention, we look if it was sent (by bot_owner) on the
-		# main server of one of the users
-		else:
-			for User in Users.values():
-				if Server_id == User.get("main_server") and User['name'] != "bot_owner":
-					Determined_user = User
-					# Multiuser debug
-					print(f"{User['name']} (server)")
-					break
 	# If the message was sent by one of the users, then it’s that user who is concerned
 	else:
 		for User in Users.values():
 			if Author_message == User["discord_username"]:
 				Determined_user = User
 				# Multiuser debug
-				print(f"{User['name']} (user sent)")
+				print(f"{Determined_user['name']} (user sent)")
+				break
+	# If the previous methods have not managed to determine the user, we look if we’re on the main
+	# server of one of the users (except for the bot owner)
+	if not Determined_user:
+		for User in Users.values():
+			if Server_id == User.get("main_server") and User["name"] != "bot_owner":
+				Determined_user = User
+				# Multiuser debug
+				print(f"{Determined_user['name']} (server)")
 				break
 	# If we’re in a DM, we check if the bot’s directory contains a file Current_user and it’s not
 	# empty. In this case, we assume that it contains the name of the current user

@@ -15,21 +15,23 @@ async def on_raw_reaction_add(Payload):
 	# When a 🌟 reaction is added to a message
 	if str(Payload.emoji) == "🌟":
 		Author_reaction = await bot.fetch_user(Payload.user_id)
-		Origin_chan = await bot.fetch_channel(Payload.channel_id)
+		Chan = await bot.fetch_channel(Payload.channel_id)
+		# Multiuser debug
+		User_name = None
 		if Author_reaction.name == Users["bot_owner"]["discord_username"]:
 			Server_id = Payload.guild_id if bot.get_guild(Payload.guild_id) else 0
-			Message = await Origin_chan.fetch_message(Payload.message_id)
-			# Multiuser debug
-			print("[on_raw_reaction_add]")
-			User = Discord_related.Determine_user(Message)
-			if User:
-				Localized_replies = L10n[User["language"]]
-				if Author_reaction.name == Users["bot_owner"]["discord_username"]:
-					DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, 1)
+			Message = await Chan.fetch_message(Payload.message_id)
+			Author_message = Message.author
+			for User in Users.values():
+				if Author_message.name == User["discord_username"] and User["name"] != "bot_owner":
+					Localized_replies = L10n[User["language"]]
+					DB_manager.Register_star(User["name"], Server_id, Chan.id, Message.id, 1)
+					# Multiuser debug
+					User_name = User['name']
 					if "log_chan" in User:
 						Log_chan = await Discord_related.Get_chan(bot.get_guild(User["main_server"]), User["log_chan"])
 						if Log_chan:
-							Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
+							Message_link = f"https://discord.com/channels/{Server_id}/{Chan.id}/{Message.id}"
 							await Log_chan.send(Localized_replies["stars_adding_reaction"].format(Bot_owner=User["bot_owner"], Message_link=Message_link))
 						else:
 							print(f"Error: Can’t send in #{User['log_chan']}")
@@ -37,7 +39,10 @@ async def on_raw_reaction_add(Payload):
 			for User in Users.values():
 				if Author_reaction.name == User["discord_username"]:
 					Localized_replies = L10n[User["language"]]
-					await Origin_chan.send(Localized_replies["stars_not_bot_owner"].format(Bot_owner=User["bot_owner"], User_nick=User["nick"]))
+					await Chan.send(Localized_replies["stars_not_bot_owner"].format(Bot_owner=User["bot_owner"], User_nick=User["nick"]))
+		# Multiuser debug
+		print("[on_raw_reaction_add]")
+		print(f"{User_name} (in function)")
 
 @bot.event
 async def on_raw_reaction_remove(Payload):
@@ -45,13 +50,13 @@ async def on_raw_reaction_remove(Payload):
 	if str(Payload.emoji) == "🌟":
 		Author_reaction = await bot.fetch_user(Payload.user_id)
 		if Author_reaction.name == Users["bot_owner"]["discord_username"]:
-			Origin_chan = await bot.fetch_channel(Payload.channel_id)
-			Message = await Origin_chan.fetch_message(Payload.message_id)
+			Chan = await bot.fetch_channel(Payload.channel_id)
+			Message = await Chan.fetch_message(Payload.message_id)
 			# Multiuser debug
 			print("[on_raw_reaction_remove]")
 			User = Discord_related.Determine_user(Message)
 			if User:
-				DB_manager.Remove_star(User, Payload.message_id)
+				DB_manager.Remove_star(User["name"], Payload.message_id)
 				if "log_chan" in User:
 					Log_chan = await Discord_related.Get_chan(bot.get_guild(User["main_server"]), User["log_chan"])
 					if Log_chan:
@@ -69,7 +74,7 @@ async def stars(Context):
 		User = Discord_related.Determine_user(Context.message)
 		if User:
 			Localized_replies = L10n[User["language"]]
-			Sum_given_stars, Sum_rewards_used = DB_manager.Get_current_balance(User)
+			Sum_given_stars, Sum_rewards_used = DB_manager.Get_current_balance(User["name"])
 			Current_balance = Sum_given_stars - Sum_rewards_used
 			await Context.send(Localized_replies["stars_balance"].format(User_nick=User["nick"], Current_balance=Current_balance, Sum_rewards_used=Sum_rewards_used, Sum_given_stars=Sum_given_stars))
 
@@ -99,9 +104,9 @@ async def Stars_revoke(Context, Stars_to_revoke: int = None):
 			await Context.send(Localized_replies["stars_revoke_positive_number"])
 			return
 		Server_id = Context.guild.id if Context.guild else 0
-		Sum_given_stars, Sum_rewards_used = DB_manager.Get_current_balance(User)
+		Sum_given_stars, Sum_rewards_used = DB_manager.Get_current_balance(User["name"])
 		Old_balance = Sum_given_stars - Sum_rewards_used
-		DB_manager.Register_star(User, Server_id, Context.channel.id, Context.message.id, -Stars_to_revoke)
+		DB_manager.Register_star(User["name"], Server_id, Context.channel.id, Context.message.id, -Stars_to_revoke)
 		if Stars_to_revoke == 1:
 			Number = Localized_replies["stars_just_one"]
 		elif Stars_to_revoke > 1:
@@ -119,9 +124,9 @@ async def Stars_list(Context, Subcommand: str = None):
 		Localized_replies = L10n[User["language"]]
 		if not Subcommand:
 			# No subcommand is given = fetch only the last 10 entries
-			Stars = DB_manager.Get_stars_list(User, Limit=10)
+			Stars = DB_manager.Get_stars_list(User["name"], Limit=10)
 		elif Subcommand == "all":
-			Stars = DB_manager.Get_stars_list(User)
+			Stars = DB_manager.Get_stars_list(User["name"])
 		else:
 			await Context.send(Localized_replies["stars_list_unknown_command"].format(Subcommand=Subcommand))
 			return
@@ -159,7 +164,7 @@ async def Stars_stats(Context):
 	User = Discord_related.Determine_user(Context.message)
 	if User:
 		Localized_replies = L10n[User["language"]]
-		Sum_given_stars = float(DB_manager.Get_current_balance(User)[0])
+		Sum_given_stars = float(DB_manager.Get_current_balance(User["name"])[0])
 		Number_days = (datetime.date.today() - User["start_date"]).days
 		Number_weeks = Number_days / 7
 		if Number_weeks < 1:

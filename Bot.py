@@ -25,6 +25,9 @@ async def on_message(Message):
 	if Message.author == bot.user:
 		return
 
+	# We set 0 if it’s a DM
+	Server_id = Message.guild.id if Message.guild else 0
+	Chan = Message.channel
 	# Multiuser debug
 	print("[on_message]")
 	User = Discord_related.Determine_user(Message)
@@ -34,16 +37,13 @@ async def on_message(Message):
 		if "🌟" in Message.content:
 			Star_count = Message.content.count("🌟")
 			if Message.author.name == Users["bot_owner"]["discord_username"]:
-				# We set 0 if it’s a DM
-				Server_id = Message.guild.id if Message.guild else 0
-				Origin_chan = Message.channel
-				DB_manager.Register_star(User, Server_id, Origin_chan.id, Message.id, Star_count)
+				DB_manager.Register_star(User["name"], Server_id, Chan.id, Message.id, Star_count)
 				#if Star_count > 1:
-				#	await Origin_chan.send(Localized_replies["stars_in_message_several"].format(Bot_owner=User["bot_owner"], Star_count=Star_count, User_nick=User["nick"]))
+				#	await Chan.send(Localized_replies["stars_in_message_several"].format(Bot_owner=User["bot_owner"], Star_count=Star_count, User_nick=User["nick"]))
 				if "log_chan" in User:
 					Log_chan = await Discord_related.Get_chan(bot.get_guild(User["main_server"]), User["log_chan"])
 					if Log_chan:
-						Message_link = f"https://discord.com/channels/{Server_id}/{Origin_chan.id}/{Message.id}"
+						Message_link = f"https://discord.com/channels/{Server_id}/{Chan.id}/{Message.id}"
 						if Star_count == 1:
 							Number = Localized_replies["stars_just_one"]
 						elif Star_count > 1:
@@ -57,12 +57,12 @@ async def on_message(Message):
 	await bot.process_commands(Message)
 
 @bot.event
-async def on_raw_message_delete(Payload):
+async def on_raw_message_delete(Message):
 	# Check if the message has been stored in the DB, and if so remove it
-	Concerned_user, Message_object = DB_manager.Remove_message(Payload.message_id)
+	Concerned_user, Message_object = DB_manager.Remove_message(Message.message_id)
 	# Multiuser debug
 	print("[on_raw_message_delete]")
-	print(f"{Concerned_user} (message deleted)")
+	print(f"{Concerned_user} (in function)")
 	if Concerned_user and "log_chan" in Users[Concerned_user]:
 		User = Users[Concerned_user]
 		Log_chan = await Discord_related.Get_chan(bot.get_guild(User["main_server"]), User["log_chan"])
@@ -74,7 +74,7 @@ async def on_raw_message_delete(Payload):
 				Reply = Localized_replies["rewards_deleting_message"].format(Bot_owner=User["bot_owner"])
 			await Log_chan.send(Reply)
 		else:
-			print(f"Error: Can’t send in #{Users['log_chan']}")
+			print(f"Error: Can’t send in #{User['log_chan']}")
 
 ###############################################################################
 # Start the bot

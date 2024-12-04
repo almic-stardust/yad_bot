@@ -64,16 +64,16 @@ async def Rewards_record(Context, Subcommand: str = None):
 			return
 
 		Cost = Rewards_available[User["name"]][ID_reward][1]
-		Sum_given_stars, Sum_rewards_used = DB_manager.Get_current_balance(User)
+		Sum_given_stars, Sum_rewards_used = DB_manager.Get_current_balance(User["name"])
 		Current_balance = Sum_given_stars - Sum_rewards_used
 		if Current_balance < Cost:
 			await Context.send(Localized_replies["rewards_record_insufficient_balance"].format(Cost=Cost, Current_balance=Current_balance))
 			return
 		if Context.author.name == Users["bot_owner"]["discord_username"]:
 			Server_id = Context.guild.id if Context.guild else 0
-			Message_already_present = DB_manager.Register_reward(User, Server_id, Context.channel.id, Context.message.id, Subcommand, Cost)
+			Message_already_present = DB_manager.Register_reward(User["name"], Server_id, Context.channel.id, Context.message.id, Subcommand, Cost)
 			if Message_already_present:
-				print("Error: this message is already associated with a reward in the DB")
+				print("Error: This message is already associated with a reward in the DB")
 			else:
 				await Context.send(Localized_replies["rewards_record_registered"])
 		else:
@@ -89,9 +89,9 @@ async def Rewards_list(Context, Subcommand: str = None):
 	if User:
 		Localized_replies = L10n[User["language"]]
 		if not Subcommand:
-			Rewards_list = DB_manager.Get_rewards_list(User, Limit=10)
+			Rewards_list = DB_manager.Get_rewards_list(User["name"], Limit=10)
 		elif Subcommand == "all":
-			Rewards_list = DB_manager.Get_rewards_list(User)
+			Rewards_list = DB_manager.Get_rewards_list(User["name"])
 		else:
 			await Context.send(Localized_replies["rewards_list_unknown_command"].format(Subcommand=Subcommand))
 			return

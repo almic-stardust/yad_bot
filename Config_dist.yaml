@@ -7,61 +7,61 @@ Token: ""
 # comment it out. See https://api.nasa.gov
 NASA_API_key: ""
 
-APOD_time:            "HH:MM"
+APOD_time:              "HH:MM"
 
 DB_config:
-  host:               ""
-  user:               ""
-  password:           ""
-  database:           ""
+  host:                 ""
+  user:                 ""
+  password:             ""
+  database:             ""
 
 Users:
   bot_owner:
     # Your discord username, without the @
-    discord_username: ""
-    birthday:         AAAA-MM-JJ
+    discord_username:   ""
+    birthday:           AAAA-MM-JJ
   user1:
-    birthday:         AAAA-MM-JJ
-    start_date:       AAAA-MM-JJ
-    nick:             ""
-    discord_username: ""
-    bot_owner:        ""
-    language:         "English"
-    # Europe time format "%a %d/%m %H:%M"
-    # US time format "%a %m/%d %I:%M %p"
-    timeformat:       ""
-	# See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-    timezone:         ""
-    main_server:      0000000000000000000
-    main_chan:        ""
+    birthday:           AAAA-MM-JJ
+    start_date:         AAAA-MM-JJ
+    nick:               ""
+    discord_username:   ""
+    bot_owner:          ""
+    language:           "English"
+    # Europe time format = "%a %d/%m %H:%M"
+    # US time format = "%a %m/%d %I:%M %p"
+    timeformat:         ""
+    # See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    timezone:           ""
+    main_server:        0000000000000000000
+    main_chan:          ""
     # If you want the bot’s actions logged in a dedicated channel. Otherwise, comment it out.
-    log_chan:         "bot-log"
+    log_chan:           "bot-log"
     events:
       - ["event1", "event2"]
   user2:
-    birthday:         AAAA-MM-JJ
-    start_date:       AAAA-MM-JJ
-    nick:             ""
-    discord_username: ""
-    bot_owner:        ""
-    language:         ""
-    timeformat:       ""
-    timezone:         ""
-    main_server:      0000000000000000000
-    main_chan:        ""
-    log_chan:         "bot-log"
+    birthday:           AAAA-MM-JJ
+    start_date:         AAAA-MM-JJ
+    nick:               ""
+    discord_username:   ""
+    bot_owner:          ""
+    language:           ""
+    timeformat:         ""
+    timezone:           ""
+    main_server:        0000000000000000000
+    main_chan:          ""
+    #log_chan:          "bot-log"
   user3:
-    birthday:         AAAA-MM-JJ
-    start_date:       AAAA-MM-JJ
-    nick:             ""
-    discord_username: ""
-    bot_owner:        ""
-    language:         ""
-    timeformat:       ""
-    timezone:         ""
-    main_server:      0000000000000000000
-    main_chan:        ""
-    log_chan:         "bot-log"
+    birthday:           AAAA-MM-JJ
+    start_date:         AAAA-MM-JJ
+    nick:               ""
+    discord_username:   ""
+    bot_owner:          ""
+    language:           ""
+    timeformat:         ""
+    timezone:           ""
+    main_server:        0000000000000000000
+    main_chan:          ""
+    log_chan:           "bot-log"
     events:
       - ["event1"]
 

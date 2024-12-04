@@ -22,23 +22,23 @@ Dependencies (Debian packages):
 
 Create a base, then the tables. Replace \<user\> with the user name in lowercase.
 
-	CREATE TABLE <user>_stars (
-	   id              INT AUTO_INCREMENT PRIMARY KEY,
-	   date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	   server_id       BIGINT NOT NULL,
-	   channel_id      BIGINT NOT NULL,
-	   message_id      BIGINT NOT NULL,
-	   star_count      INT NOT NULL
+	CREATE TABLE <username>_stars (
+	    id              INT AUTO_INCREMENT PRIMARY KEY,
+	    date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    server_id       BIGINT NOT NULL,
+	    chan_id         BIGINT NOT NULL,
+	    message_id      BIGINT NOT NULL,
+	    star_count      INT NOT NULL
 	);
-	
-	CREATE TABLE <user>_rewards (
-	   id              INT AUTO_INCREMENT PRIMARY KEY,
-	   date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	   server_id       BIGINT NOT NULL,
-	   channel_id      BIGINT NOT NULL,
-	   message_id      BIGINT NOT NULL,
-	   code            VARCHAR(30) NOT NULL,
-	   cost            INT NOT NULL
+
+	CREATE TABLE <username>_rewards (
+	    id              INT AUTO_INCREMENT PRIMARY KEY,
+	    date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    server_id       BIGINT NOT NULL,
+	    chan_id         BIGINT NOT NULL,
+	    message_id      BIGINT NOT NULL,
+	    code            VARCHAR(30) NOT NULL,
+	    cost            INT NOT NULL
 	);
 
 #### Last steps
