@@ -20,7 +20,7 @@ Dependencies (Debian packages):
 
 #### Database
 
-Create a base, then the tables. Replace \<user\> with the user name in lowercase.
+Create a base, then the tables. Replace \<username\> with the user name in lowercase.
 
 	CREATE TABLE <username>_stars (
 	    id              INT AUTO_INCREMENT PRIMARY KEY,
@@ -39,6 +39,20 @@ Create a base, then the tables. Replace \<user\> with the user name in lowercase
 	    message_id      BIGINT NOT NULL,
 	    code            VARCHAR(30) NOT NULL,
 	    cost            INT NOT NULL
+	);
+
+	CREATE TABLE <username>_history (
+	    date_creation   TIMESTAMP NOT NULL,
+	    server_id       BIGINT NOT NULL,
+	    chan_id         BIGINT NOT NULL,
+	    message_id      BIGINT NOT NULL PRIMARY KEY,
+	    reply_to        BIGINT NULL,
+	    user_name       VARCHAR(32) NOT NULL,
+	    content         TEXT NOT NULL,
+	    edited          BOOLEAN NOT NULL DEFAULT FALSE,
+	    attachments     TEXT NULL,
+	    reactions       TEXT NULL,
+	    date_deletion   TIMESTAMP NULL
 	);
 
 #### Last steps

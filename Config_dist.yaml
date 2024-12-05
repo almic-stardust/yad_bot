@@ -36,6 +36,7 @@ Users:
     main_chan:          ""
     # If you want the bot’s actions logged in a dedicated channel. Otherwise, comment it out.
     log_chan:           "bot-log"
+    history:            True
     events:
       - ["event1", "event2"]
   user2:
@@ -50,6 +51,7 @@ Users:
     main_server:        0000000000000000000
     main_chan:          ""
     #log_chan:          "bot-log"
+    history:            False
   user3:
     birthday:           AAAA-MM-JJ
     start_date:         AAAA-MM-JJ
@@ -62,6 +64,7 @@ Users:
     main_server:        0000000000000000000
     main_chan:          ""
     log_chan:           "bot-log"
+    history:            False
     events:
       - ["event1"]
 
