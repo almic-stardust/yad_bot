@@ -117,3 +117,4 @@ async def on_member_remove(Leaver: discord.Member):
 					await Chan.send(f"{User['nick']} has left the server.")
 			else:
 				print("Main channel not found or configured incorrectly")
+			break

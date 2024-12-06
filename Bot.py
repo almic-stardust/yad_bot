@@ -40,6 +40,7 @@ async def on_message(Message):
 
 @bot.event
 async def on_raw_message_delete(Message):
+	History.Message_deleted(Message)
 	await Stars.Deletion_in_message(Message)
 
 ###############################################################################
@@ -53,13 +54,16 @@ async def on_ready():
 
 	# Start the APOD event, at the daily time specified in the configuration
 	if "NASA_API_key" in Config and "APOD_time" in Config:
-		@Events.APOD.before_loop
-		async def Waiting_before_APOD():
-			Wanted_time = datetime.datetime.strptime(Config["APOD_time"], "%H:%M").time()
-			Delay = Events.Time_until(Wanted_time)
-			print(f"Delay until APOD task: {Delay}")
-			await asyncio.sleep(Delay.total_seconds())
-		Events.APOD.start()
+		if not Events.APOD.is_running():
+			@Events.APOD.before_loop
+			async def Waiting_before_APOD():
+				Wanted_time = datetime.datetime.strptime(Config["APOD_time"], "%H:%M").time()
+				Delay = Events.Time_until(Wanted_time)
+				print(f"APOD task: scheduled in {Delay}")
+				await asyncio.sleep(Delay.total_seconds())
+			Events.APOD.start()
+		else:
+			print("APOD task: already running")
 
 	print("————————————————————————————————————————")
 

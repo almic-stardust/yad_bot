@@ -35,11 +35,13 @@ async def on_raw_reaction_add(Payload):
 							await Log_chan.send(Localized_replies["stars_adding_reaction"].format(Bot_owner=User["bot_owner"], Message_link=Message_link))
 						else:
 							print(f"Error: Can’t send in #{User['log_chan']}")
+					break
 		else:
 			for User in Users.values():
 				if Author_reaction.name == User["discord_username"]:
 					Localized_replies = L10n[User["language"]]
 					await Chan.send(Localized_replies["stars_not_bot_owner"].format(Bot_owner=User["bot_owner"], User_nick=User["nick"]))
+					break
 		# Multiuser debug
 		print("[on_raw_reaction_add]")
 		print(f"{User_name} (in function)")

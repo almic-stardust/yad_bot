@@ -20,6 +20,8 @@ Users:
     # Your discord username, without the @
     discord_username:   ""
     birthday:           AAAA-MM-JJ
+    hist_keep_all:      True
+
   user1:
     birthday:           AAAA-MM-JJ
     start_date:         AAAA-MM-JJ
@@ -37,6 +39,7 @@ Users:
     # If you want the bot’s actions logged in a dedicated channel. Otherwise, comment it out.
     log_chan:           "bot-log"
     history:            True
+    hist_keep_all:      True
     events:
       - ["event1", "event2"]
   user2:
@@ -51,7 +54,8 @@ Users:
     main_server:        0000000000000000000
     main_chan:          ""
     #log_chan:          "bot-log"
-    history:            False
+    history:            True
+    hist_keep_all:      False
   user3:
     birthday:           AAAA-MM-JJ
     start_date:         AAAA-MM-JJ

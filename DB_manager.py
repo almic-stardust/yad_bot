@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import MySQLdb
-from Config_manager import Config
+from Config_manager import Config, Users
 
 def Connect_DB():
 	try:
@@ -172,6 +172,27 @@ def History_addition(User_table, Date, Server_id, Chan_id, Message_id, Replied_m
 					Replied_message_id, \
 					Discord_username, Content, Attachments)
 			)
+		Connection.commit()
+	finally:
+		Cursor.close()
+		Connection.close()
+
+def History_deletion(User_table, Date, Message_id):
+	Connection = Connect_DB()
+	Cursor = Connection.cursor()
+	try:
+		# Check if the message is in the DB, and if so recover the Discord username of who posted it
+		Cursor.execute(f"SELECT user_name FROM {User_table}_history WHERE message_id = %s", (Message_id,))
+		Result = Cursor.fetchone()
+		if Result:
+			Discord_username = Result[0]
+			for User in Users.values():
+				if Discord_username == User["discord_username"]:
+					if "history_keep_all" in User and User["history_keep_all"]:
+						Cursor.execute(f"UPDATE {User_table}_history SET date_deletion = %s WHERE message_id = %s", (Date, Message_id))
+					else:
+						Cursor.execute(f"DELETE FROM {User_table}_history WHERE message_id = %s", (Message_id,))
+					break
 		Connection.commit()
 	finally:
 		Cursor.close()
