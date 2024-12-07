@@ -87,25 +87,6 @@ async def Addition_in_message(User, Server_id, Chan, Message):
 			else:
 				print(f"Error: Can’t send in #{User['log_chan']}")
 
-async def Deletion_in_message(Message):
-	# Check if the message has been stored in the DB, and if so remove it
-	Concerned_user, Message_object = DB_manager.Remove_message(Message.message_id)
-	# Multiuser debug
-	print("[deletion_in_message]")
-	print(f"{Concerned_user} (in function)")
-	if Concerned_user and "log_chan" in Users[Concerned_user]:
-		User = Users[Concerned_user]
-		Log_chan = await Discord_related.Get_chan(bot.get_guild(User["main_server"]), User["log_chan"])
-		if Log_chan:
-			Localized_replies = L10n[User["language"]]
-			if Message_object == "Stars":
-				Reply = Localized_replies["stars_deleting_message"].format(Bot_owner=User["bot_owner"])
-			if Message_object == "Reward":
-				Reply = Localized_replies["rewards_deleting_message"].format(Bot_owner=User["bot_owner"])
-			await Log_chan.send(Reply)
-		else:
-			print(f"Error: Can’t send in #{User['log_chan']}")
-
 @bot.group()
 async def stars(Context):
 	# If no subcommand is invoked, display the current balance of 🌟 in the DB

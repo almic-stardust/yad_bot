@@ -30,6 +30,14 @@ def Message_added(Server_id, Chan, Message):
 					Message.author.name, Message.content, Attachments)
 			break
 
+def Message_edited(Server_id, Message_id, New_content):
+	for User in Users.values():
+		if Server_id == User.get("main_server"):
+			DB_manager.History_edition(User["name"], \
+					datetime.datetime.now().isoformat(),
+					Message_id, New_content)
+			break
+
 def Message_deleted(Message):
 	Server_id = Message.guild_id
 	for User in Users.values():

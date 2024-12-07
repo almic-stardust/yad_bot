@@ -56,7 +56,7 @@ def Remove_star(User_table, Message_id):
 def Remove_message(Message_id):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
-	Message_object = Concerned_user = None
+	Message_subject = Concerned_user = None
 	try:
 		# Get a list of the *_stars and *_rewards tables in the DB
 		Cursor.execute("SHOW TABLES LIKE '%\\_stars'")
@@ -74,13 +74,13 @@ def Remove_message(Message_id):
 					# The name of the concerned user is the prefix of the table
 					Concerned_user = Table.split("_")[0]
 					if "_stars" in Table:
-						Message_object = "Stars"
+						Message_subject = "Stars"
 					elif "_rewards" in Table:
-						Message_object = "Reward"
+						Message_subject = "Reward"
 					Cursor.execute(f"DELETE FROM {Table} WHERE message_id = %s", (Message_id,))
 					Connection.commit()
 					break
-		return Concerned_user, Message_object
+		return Concerned_user, Message_subject
 	finally:
 		Cursor.close()
 		Connection.close()
@@ -177,6 +177,31 @@ def History_addition(User_table, Date, Server_id, Chan_id, Message_id, Replied_m
 		Cursor.close()
 		Connection.close()
 
+def History_edition(User_table, Date, Message_id, New_content):
+	Connection = Connect_DB()
+	Cursor = Connection.cursor()
+	try:
+		# Check if the message is present in the DB
+		Cursor.execute(f"SELECT user_name, content FROM {User_table}_history WHERE message_id = %s", (Message_id,))
+		Result = Cursor.fetchone()
+		if Result:
+			Discord_username = Result[0]
+			for User in Users.values():
+				if Discord_username == User["discord_username"]:
+					if "hist_keep_all" in User and User["hist_keep_all"]:
+						Old_content = Result[1]
+						Edited_content = f"{Old_content}\n\n<|--- Edited {Date} ---|>\n\n{New_content}"
+						Request = f"UPDATE {User_table}_history SET content = %s, edited = TRUE WHERE message_id = %s"
+					else:
+						Edited_content = New_content
+						Request = f"UPDATE {User_table}_history SET content = %s WHERE message_id = %s"
+					Cursor.execute(Request, (Edited_content, Message_id))
+					break
+		Connection.commit()
+	finally:
+		Cursor.close()
+		Connection.close()
+
 def History_deletion(User_table, Date, Message_id):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
@@ -188,7 +213,7 @@ def History_deletion(User_table, Date, Message_id):
 			Discord_username = Result[0]
 			for User in Users.values():
 				if Discord_username == User["discord_username"]:
-					if "history_keep_all" in User and User["history_keep_all"]:
+					if "hist_keep_all" in User and User["hist_keep_all"]:
 						Cursor.execute(f"UPDATE {User_table}_history SET date_deletion = %s WHERE message_id = %s", (Date, Message_id))
 					else:
 						Cursor.execute(f"DELETE FROM {User_table}_history WHERE message_id = %s", (Message_id,))
