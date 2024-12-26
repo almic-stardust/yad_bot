@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from discord.ext import tasks
 import requests
 import datetime
-from discord.ext import tasks
+
 from Config_manager import Config, Users
 from Discord_related import bot
 import Discord_related

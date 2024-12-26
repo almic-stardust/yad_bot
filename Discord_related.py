@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import discord
-import os
 from discord.ext import commands
+import os
+
 from Config_manager import Users
 
 intents = discord.Intents.default()

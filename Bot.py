@@ -26,7 +26,7 @@ async def on_message(Message):
 	Server_id = Message.guild.id if Message.guild else 0
 	Chan = Message.channel
 
-	History.Message_added(Server_id, Chan, Message)
+	await History.Message_added(Server_id, Chan, Message)
 
 	# The bot ignores its own messages
 	if Message.author == bot.user:
@@ -53,7 +53,7 @@ async def on_raw_message_edit(Payload):
 @bot.event
 async def on_raw_message_delete(Payload):
 
-	History.Message_deleted(Payload)
+	History.Message_deleted(Server_id, Payload.message_id)
 
 	# Check if the message has been stored in the DB regarding stars or rewards, and if so remove it
 	Concerned_user, Message_subject = DB_manager.Remove_message(Payload.message_id)
@@ -84,16 +84,16 @@ async def on_ready():
 
 	# Start the APOD event, at the daily time specified in the configuration
 	if "NASA_API_key" in Config and "APOD_time" in Config:
-		if not Events.APOD.is_running():
+		if Events.APOD.is_running():
+			print("APOD task: already running")
+		else:
 			@Events.APOD.before_loop
 			async def Waiting_before_APOD():
 				Wanted_time = datetime.datetime.strptime(Config["APOD_time"], "%H:%M").time()
 				Delay = Events.Time_until(Wanted_time)
-				print(f"APOD task: scheduled in {Delay}")
+				print(f"APOD task: scheduling (in {Misc.Format_time(Delay)})")
 				await asyncio.sleep(Delay.total_seconds())
 			Events.APOD.start()
-		else:
-			print("APOD task: already running")
 
 	print("————————————————————————————————————————")
 

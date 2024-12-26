@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import random
+
 from Config_manager import L10n
 from Discord_related import bot
 import Discord_related
@@ -20,3 +21,9 @@ async def roll(Context, Dice: str):
 			return
 		Result = ", ".join(str(random.randint(1, Limit)) for r in range(Rolls))
 		await Context.send(Result)
+
+def Format_time(Time):
+	Seconds = int(Time.total_seconds())
+	Hours = Seconds // 3600
+	Minutes = (Seconds % 3600) // 60
+	return f"{Hours}h{Minutes}"
