@@ -53,6 +53,7 @@ async def on_raw_message_edit(Payload):
 @bot.event
 async def on_raw_message_delete(Payload):
 
+	Server_id = Payload.guild_id if bot.get_guild(Payload.guild_id) else 0
 	History.Message_deleted(Server_id, Payload.message_id)
 
 	# Check if the message has been stored in the DB regarding stars or rewards, and if so remove it

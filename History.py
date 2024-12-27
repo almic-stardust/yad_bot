@@ -5,10 +5,40 @@ from zoneinfo import ZoneInfo
 import json
 import aiohttp
 import os
+import smtplib
+import email.utils
+from email.mime.text import MIMEText
 
-from Config_manager import Users
+from Config_manager import Config, Users
 from Discord_related import bot
 import DB_manager
+
+def Notification_for_oversized_files(User, Files_URLs):
+	User_name = User['name'].capitalize()
+	Mail_server = Config.get("Mail_server")
+	if not Mail_server:
+		print("Error: the mail server must be configured.")
+		return
+	Bot_mail = Config.get("Bot_mail_address")
+	Bot_name = Bot_mail.split("@")[0].replace('_', ' ').capitalize()
+	Owner_mail = Users["bot_owner"].get("mail_address")
+	if not Bot_mail or not Owner_mail:
+		print("Error: both mail addresses (bot and owner) must be configured.")
+		return
+	Mail = MIMEText(f"Hello {User['bot_owner']},\n\n" + \
+			f"{User_name} sent files exceeding the size limit:\n\n" + \
+			"\n".join(Files_URLs))
+	Mail["Subject"] = f"{User_name} sent oversized attachments"
+	Mail["From"] = f"{Bot_name} <{Bot_mail}>"
+	Mail["To"] = f"{User['bot_owner']} <{Owner_mail}>"
+	Mail["Date"] = email.utils.format_datetime(datetime.datetime.now())
+	try:
+		with smtplib.SMTP(Mail_server, 25) as Server:
+			Server.starttls()
+			Server.sendmail(Bot_mail, Owner_mail, Mail.as_string())
+			print("Oversized attachment: notification mail sent successfully.")
+	except Exception as e:
+		print(f"Failed to send mail: {e}")
 
 async def Download_attachments(User, Message):
 	Attachments_filenames = []
@@ -36,7 +66,7 @@ async def Download_attachments(User, Message):
 							File.write(await Response.read())
 						Attachments_filenames.append(File_name)
 	if Oversized_files:
-		print(f"Error: {User['name']} sent an oversized file! {Oversized_file}")
+		Notification_for_oversized_files(User, Oversized_files)
 	Attachments_filenames = json.dumps(Attachments_filenames)
 	return Attachments_filenames
 

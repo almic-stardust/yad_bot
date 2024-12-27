@@ -3,6 +3,9 @@
 # Your discord token. See https://discordpy.readthedocs.io/en/stable/discord.html
 Token: ""
 
+Mail_server: ""
+Bot_mail_address: ""
+
 # If you want the bot to post every day the APOD (NASA’s astronomy picture of the day). Otherwise,
 # comment it out. See https://api.nasa.gov
 NASA_API_key: ""
@@ -17,11 +20,11 @@ DB_config:
 
 Users:
   bot_owner:
+    birthday:           AAAA-MM-JJ
     # Your discord username, without the @
     discord_username:   ""
-    birthday:           AAAA-MM-JJ
+    mail_address:       ""
     hist_keep_all:      True
-
   user1:
     birthday:           AAAA-MM-JJ
     start_date:         AAAA-MM-JJ
@@ -40,6 +43,7 @@ Users:
     log_chan:           "bot-log"
     history:            True
     hist_keep_all:      True
+    hist_files_storage: ""
     events:
       - ["event1", "event2"]
   user2:
@@ -56,6 +60,7 @@ Users:
     #log_chan:          "bot-log"
     history:            True
     hist_keep_all:      False
+    hist_files_storage: ""
   user3:
     birthday:           AAAA-MM-JJ
     start_date:         AAAA-MM-JJ
