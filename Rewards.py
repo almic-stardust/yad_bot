@@ -18,10 +18,10 @@ async def rewards(Context):
 			Localized_replies = L10n[User["language"]]
 			if User["name"] in Rewards_available:
 				Display_rewards = []
-				Index = 1
+				Counter = 1
 				for Reward in Rewards_available[User["name"]]:
-					Display_rewards.append(f"{Index}. ({Reward[1]} 🌟) {Reward[2]} [{Reward[0]}]")
-					Index += 1
+					Display_rewards.append(f"{Counter}. ({Reward[1]} 🌟) {Reward[2]} [{Reward[0]}]")
+					Counter += 1
 				# Split_reply() has a general use case, so its input is a single string
 				Display_rewards = "\n".join(Display_rewards)
 				for Message in Discord_related.Split_reply(Display_rewards):
@@ -54,11 +54,11 @@ async def Rewards_record(Context, Subcommand: str = None):
 		if User["name"] not in Rewards_available:
 			await Context.send(Localized_replies["rewards_record_no_reward_listed"].format(User_nick=User["nick"]))
 			return
-		ID_reward = Index = -1
+		ID_reward = Counter = -1
 		for Reward in Rewards_available[User["name"]]:
-			Index += 1
+			Counter += 1
 			if Subcommand == Reward[0]:
-				ID_reward = Index
+				ID_reward = Counter
 				break
 		if ID_reward == -1:
 			await Context.send(Localized_replies["rewards_record_unknown_reward"].format(Subcommand=Subcommand))

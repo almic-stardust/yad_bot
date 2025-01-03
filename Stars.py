@@ -167,7 +167,7 @@ async def Stars_list(Context, Subcommand: str = None):
 			User_time = (Date.astimezone(ZoneInfo(User["timezone"]))).strftime(User["timeformat"])
 			Message_link = f"https://discord.com/channels/{Server_id}/{Channel_id}/{Message_id}"
 			Line = f"[{Server_time}]({Message_link}) ({User_time}) "
-			for Index in range(Star_count):
+			for Counter in range(Star_count):
 				Line += "🌟"
 			Stars_list.append(Line)
 		# Reverse the list, to show the oldest first and the most recent last

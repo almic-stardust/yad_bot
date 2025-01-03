@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 import json
 import aiohttp
 import os
+import glob
 import smtplib
 import email.utils
 from email.mime.text import MIMEText
@@ -60,7 +61,33 @@ async def Download_attachments(User, Message):
 						Attachments_filenames.append(Attachment.url)
 					else:
 						Date = Message.created_at.astimezone(ZoneInfo("Europe/Paris")).strftime('%Y%m%d')
-						File_name = f"{Date}—{Attachment.filename}"
+						Base_name, File_ext = os.path.splitext(Attachment.filename)
+						Base_name = Base_name.replace("—", "_")
+						Base_name = f"{Date}—" + Base_name
+						File_name = f"{Base_name}{File_ext}"
+						File_pattern = os.path.join(Storage_dir, f"{Base_name}*{File_ext}")
+						Matching_files = glob.glob(File_pattern)
+						if Matching_files:
+							# If there’s only one file, we rename it to add “—1” at the end of its
+							# base name, and the current file will have “—2” in its base name
+							if len(Matching_files) == 1:
+								Old_file_old_path = os.path.join(Storage_dir, File_name)
+								Old_file_new_name = f"{Base_name}—1{File_ext}"
+								Old_file_new_path = os.path.join(Storage_dir, Old_file_new_name)
+								os.rename(Old_file_old_path, Old_file_new_path)
+								File_name = f"{Base_name}—2{File_ext}"
+							# If there’re several files already, we determine the biggest suffix
+							# that has already been assigned, so that the current file gets a unique
+							# number at the end of its base name. This avoids problems if one of the
+							# duplicates has been deleted before the current file was posted
+							else:
+								Counters = []
+								for File in Matching_files:
+									Parts = os.path.splitext(os.path.basename(File))[0].split("—")
+									if len(Parts) == 3 and Parts[-1].isdigit():
+										Counters.append(int(Parts[-1]))
+								Counter = max(Counters) + 1
+								File_name = f"{Base_name}—{Counter}{File_ext}"
 						File_path = os.path.join(Storage_dir, File_name)
 						with open(File_path, "wb") as File:
 							File.write(await Response.read())
