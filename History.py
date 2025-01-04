@@ -64,34 +64,35 @@ async def Download_attachments(User, Message):
 						Base_name, File_ext = os.path.splitext(Attachment.filename)
 						Base_name = Base_name.replace("—", "_")
 						Base_name = f"{Date}—" + Base_name
-						File_name = f"{Base_name}{File_ext}"
+						Filename = f"{Base_name}{File_ext}"
 						File_pattern = os.path.join(Storage_dir, f"{Base_name}*{File_ext}")
 						Matching_files = glob.glob(File_pattern)
 						if Matching_files:
 							# If there’s only one file, we rename it to add “—1” at the end of its
 							# base name, and the current file will have “—2” in its base name
 							if len(Matching_files) == 1:
-								Old_file_old_path = os.path.join(Storage_dir, File_name)
+								Old_file_old_path = os.path.join(Storage_dir, Filename)
 								Old_file_new_name = f"{Base_name}—1{File_ext}"
 								Old_file_new_path = os.path.join(Storage_dir, Old_file_new_name)
 								os.rename(Old_file_old_path, Old_file_new_path)
-								File_name = f"{Base_name}—2{File_ext}"
+								Filename = f"{Base_name}—2{File_ext}"
 							# If there’re several files already, we determine the biggest suffix
 							# that has already been assigned, so that the current file gets a unique
 							# number at the end of its base name. This avoids problems if one of the
 							# duplicates has been deleted before the current file was posted
 							else:
-								Counters = []
+								Duplicates_suffixes = []
 								for File in Matching_files:
 									Parts = os.path.splitext(os.path.basename(File))[0].split("—")
+									# If the filename matches AAAAMMJJ—Name_from_Discord—Number.ext
 									if len(Parts) == 3 and Parts[-1].isdigit():
-										Counters.append(int(Parts[-1]))
-								Counter = max(Counters) + 1
-								File_name = f"{Base_name}—{Counter}{File_ext}"
-						File_path = os.path.join(Storage_dir, File_name)
+										Duplicates_suffixes.append(int(Parts[-1]))
+								Suffix = max(Duplicates_suffixes) + 1
+								Filename = f"{Base_name}—{Suffix}{File_ext}"
+						File_path = os.path.join(Storage_dir, Filename)
 						with open(File_path, "wb") as File:
 							File.write(await Response.read())
-						Attachments_filenames.append(File_name)
+						Attachments_filenames.append(Filename)
 	if Oversized_files:
 		Notification_for_oversized_files(User, Oversized_files)
 	Attachments_filenames = json.dumps(Attachments_filenames)
@@ -135,6 +136,38 @@ def Message_deleted(Server_id, Message_id):
 		if Server_id == User.get("main_server"):
 			if not "history" in User or not User["history"]:
 				return
+			Message = DB_manager.History_fetch_message(User["name"], Message_id)
+			if Message:
+				Attachments = Message[7]
+				Attachments = json.loads(Attachments) if Attachments else []
+				if Attachments:
+					Storage_dir = User.get("hist_files_storage")
+					if not Storage_dir:
+						print(f"Error: The folder where {User['name']}’s attachments were stored isn’t accessible.")
+						return
+					for Filename in Attachments:
+						File_path = os.path.join(Storage_dir, Filename)
+						if os.path.exists(File_path):
+							if "hist_keep_all" in User and User["hist_keep_all"]:
+								Base_name, File_ext = os.path.splitext(Filename)
+								# Split the filename into the date and the rest of it
+								Parts = Base_name.split("—", 1)
+								if len(Parts) == 2:
+									New_base_name = f"{Parts[0]}—DELETED—{Parts[1]}"
+								else:
+									# Fallback for unexpected cases
+									New_base_name = f"DELETED—{Base_name}"
+								New_filename = f"{New_base_name}{File_ext}"
+								New_file_path = os.path.join(Storage_dir, New_filename)
+								os.rename(File_path, New_file_path)
+							else:
+								if os.path.exists(File_path):
+									try:
+										os.remove(File_path)
+									except OSError as e:
+										print(f"Error deleting file {Filename}: {e}")
+						else:
+							print(f"Error: File {Filename} not found.")
 			DB_manager.History_deletion(User["name"], \
 					datetime.datetime.now().isoformat(), \
 					Message_id)

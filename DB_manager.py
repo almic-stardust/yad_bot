@@ -223,3 +223,24 @@ def History_deletion(User_table, Date, Message_id):
 	finally:
 		Cursor.close()
 		Connection.close()
+
+def History_fetch_message(User_table, Message_id):
+	Connection = Connect_DB()
+	Cursor = Connection.cursor()
+	try:
+		Cursor.execute(f"SELECT \
+					date_creation, \
+					server_id, \
+					chan_id, \
+					message_id, \
+					reply_to, \
+					user_name, \
+					content, \
+					attachments, \
+					reactions, \
+					date_deletion \
+					FROM {User_table}_history WHERE message_id = %s", (Message_id,))
+		return Cursor.fetchone()
+	finally:
+		Cursor.close()
+		Connection.close()
