@@ -26,8 +26,8 @@ def Notification_for_oversized_files(User, Files_URLs):
 	if not Bot_mail or not Owner_mail:
 		print("Error: both mail addresses (bot and owner) must be configured.")
 		return
-	Mail = MIMEText(f"Hello {User['bot_owner']},\n\n" + \
-			f"{User_name} sent files exceeding the size limit:\n\n" + \
+	Mail = MIMEText(f"Hello {User['bot_owner']},\n\n"
+			f"{User_name} sent files exceeding the size limit:\n\n"
 			"\n".join(Files_URLs))
 	Mail["Subject"] = f"{User_name} sent oversized attachments"
 	Mail["From"] = f"{Bot_name} <{Bot_mail}>"
@@ -114,10 +114,10 @@ async def Message_added(Server_id, Chan, Message):
 			Replied_message_id = 0
 			if Message.reference and Message.reference.resolved:
 				Replied_message_id = Message.reference.resolved.id
-			DB_manager.History_addition(User["name"], \
-					Message.created_at.astimezone(ZoneInfo("Europe/Paris")).isoformat(), \
-					Server_id, Chan.id, Message.id, \
-					Replied_message_id, \
+			DB_manager.History_addition(User["name"],
+					Message.created_at.astimezone(ZoneInfo("Europe/Paris")).isoformat(),
+					Server_id, Chan.id, Message.id,
+					Replied_message_id,
 					Message.author.name, Message.content, Attachments)
 			break
 
@@ -126,9 +126,10 @@ def Message_edited(Server_id, Message_id, New_content):
 		if Server_id == User.get("main_server"):
 			if not "history" in User or not User["history"]:
 				return
-			DB_manager.History_edition(User["name"], \
+			DB_manager.History_edition(User["name"],
+					Message_id,
 					datetime.datetime.now().isoformat(),
-					Message_id, New_content)
+					New_content)
 			break
 
 def Message_deleted(Server_id, Message_id):
@@ -138,17 +139,23 @@ def Message_deleted(Server_id, Message_id):
 				return
 			Message = DB_manager.History_fetch_message(User["name"], Message_id)
 			if Message:
-				Attachments = Message[7]
-				Attachments = json.loads(Attachments) if Attachments else []
+				Discord_username, Attachments = Message[5], Message[7]
+				# The variable User doesn’t necessarily identify the author of the message
+				for Look_for_author in Users.values():
+					if Discord_username == Look_for_author["discord_username"]:
+						Author = Look_for_author
+					break
+				Attachments = json.loads(Attachments) if Attachments else None
 				if Attachments:
 					Storage_dir = User.get("hist_files_storage")
 					if not Storage_dir:
 						print(f"Error: The folder where {User['name']}’s attachments were stored isn’t accessible.")
 						return
+					Updated_filenames = []
 					for Filename in Attachments:
 						File_path = os.path.join(Storage_dir, Filename)
 						if os.path.exists(File_path):
-							if "hist_keep_all" in User and User["hist_keep_all"]:
+							if "hist_keep_all" in Author and Author["hist_keep_all"]:
 								Base_name, File_ext = os.path.splitext(Filename)
 								# Split the filename into the date and the rest of it
 								Parts = Base_name.split("—", 1)
@@ -160,6 +167,7 @@ def Message_deleted(Server_id, Message_id):
 								New_filename = f"{New_base_name}{File_ext}"
 								New_file_path = os.path.join(Storage_dir, New_filename)
 								os.rename(File_path, New_file_path)
+								Updated_filenames.append((Filename, New_filename))
 							else:
 								if os.path.exists(File_path):
 									try:
@@ -168,7 +176,9 @@ def Message_deleted(Server_id, Message_id):
 										print(f"Error deleting file {Filename}: {e}")
 						else:
 							print(f"Error: File {Filename} not found.")
-			DB_manager.History_deletion(User["name"], \
-					datetime.datetime.now().isoformat(), \
-					Message_id)
+				DB_manager.History_deletion(User["name"],
+					Message_id,
+					Author,
+					datetime.datetime.now().isoformat(),
+					Updated_filenames)
 			break

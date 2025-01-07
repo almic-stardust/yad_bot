@@ -178,7 +178,7 @@ def History_addition(User_table, Date, Server_id, Chan_id, Message_id, Replied_m
 		Cursor.close()
 		Connection.close()
 
-def History_edition(User_table, Date, Message_id, New_content):
+def History_edition(User_table, Message_id, Date, New_content):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
@@ -203,22 +203,25 @@ def History_edition(User_table, Date, Message_id, New_content):
 		Cursor.close()
 		Connection.close()
 
-def History_deletion(User_table, Date, Message_id):
+def History_deletion(User_table, Message_id, Author, Date, Updated_filenames):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
-		# Check if the message is in the DB, and if so recover the Discord username of who posted it
+		# Check if the message is in the DB
 		Cursor.execute(f"SELECT user_name FROM {User_table}_history WHERE message_id = %s", (Message_id,))
 		Result = Cursor.fetchone()
 		if Result:
-			Discord_username = Result[0]
-			for User in Users.values():
-				if Discord_username == User["discord_username"]:
-					if "hist_keep_all" in User and User["hist_keep_all"]:
-						Cursor.execute(f"UPDATE {User_table}_history SET date_deletion = %s WHERE message_id = %s", (Date, Message_id))
-					else:
-						Cursor.execute(f"DELETE FROM {User_table}_history WHERE message_id = %s", (Message_id,))
-					break
+			if "hist_keep_all" in Author and Author["hist_keep_all"]:
+				Cursor.execute(f"""
+						UPDATE {User_table}_history
+						SET attachments = %, date_deletion = %s
+						WHERE message_id = %s""",
+						(Updated_filenames, Date, Message_id))
+			else:
+				Cursor.execute(f"""
+						DELETE FROM {User_table}_history
+						WHERE message_id = %s""",
+						(Message_id,))
 		Connection.commit()
 	finally:
 		Cursor.close()
