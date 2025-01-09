@@ -140,18 +140,23 @@ def Message_deleted(Server_id, Message_id):
 			Message = DB_manager.History_fetch_message(User["name"], Message_id)
 			if Message:
 				Discord_username, Attachments = Message[5], Message[7]
+				Updated_filenames = []
 				# The variable User doesn’t necessarily identify the author of the message
-				for Look_for_author in Users.values():
-					if Discord_username == Look_for_author["discord_username"]:
-						Author = Look_for_author
-					break
-				Attachments = json.loads(Attachments) if Attachments else None
+				Keep_history = False
+				for Author in Users.values():
+					print(Author)
+					if Discord_username == Author["discord_username"]:
+						if "hist_keep_all" in Author and Author["hist_keep_all"]:
+							Keep_history = True
+						break
+				Attachments = json.loads(Attachments) if Attachments else []
+				print(Keep_history)
+				print(Attachments)
 				if Attachments:
 					Storage_dir = User.get("hist_files_storage")
 					if not Storage_dir:
 						print(f"Error: The folder where {User['name']}’s attachments were stored isn’t accessible.")
 						return
-					Updated_filenames = []
 					for Filename in Attachments:
 						File_path = os.path.join(Storage_dir, Filename)
 						if os.path.exists(File_path):
@@ -167,7 +172,7 @@ def Message_deleted(Server_id, Message_id):
 								New_filename = f"{New_base_name}{File_ext}"
 								New_file_path = os.path.join(Storage_dir, New_filename)
 								os.rename(File_path, New_file_path)
-								Updated_filenames.append((Filename, New_filename))
+								Updated_filenames.append(New_filename)
 							else:
 								if os.path.exists(File_path):
 									try:
@@ -176,9 +181,11 @@ def Message_deleted(Server_id, Message_id):
 										print(f"Error deleting file {Filename}: {e}")
 						else:
 							print(f"Error: File {Filename} not found.")
+					Updated_filenames = json.dumps(Updated_filenames)
+				print(Updated_filenames)
 				DB_manager.History_deletion(User["name"],
 					Message_id,
-					Author,
+					Keep_history,
 					datetime.datetime.now().isoformat(),
 					Updated_filenames)
 			break
