@@ -75,6 +75,8 @@ async def Download_attachments(User, Message):
 								Old_file_new_name = f"{Base_name}—1{File_ext}"
 								Old_file_new_path = os.path.join(Storage_dir, Old_file_new_name)
 								os.rename(Old_file_old_path, Old_file_new_path)
+								DB_manager.History_update_filename(User["name"],
+									Filename, Old_file_new_name)
 								Filename = f"{Base_name}—2{File_ext}"
 							# If there’re several files already, we determine the biggest suffix
 							# that has already been assigned, so that the current file gets a unique
@@ -132,6 +134,17 @@ def Message_edited(Server_id, Message_id, New_content):
 					New_content)
 			break
 
+def New_name_for_deleted_file(Filename):
+	Base_name, File_ext = os.path.splitext(Filename)
+	# Split the filename into the date and the rest of it
+	Parts = Base_name.split("—", 1)
+	if len(Parts) == 2:
+		New_base_name = f"{Parts[0]}—DELETED—{Parts[1]}"
+	else:
+		# Fallback for unexpected cases
+		New_base_name = f"DELETED—{Base_name}"
+	return f"{New_base_name}{File_ext}"
+
 def Message_deleted(Server_id, Message_id):
 	for User in Users.values():
 		if Server_id == User.get("main_server"):
@@ -140,49 +153,38 @@ def Message_deleted(Server_id, Message_id):
 			Message = DB_manager.History_fetch_message(User["name"], Message_id)
 			if Message:
 				Discord_username, Attachments = Message[5], Message[7]
-				Updated_filenames = []
-				# The variable User doesn’t necessarily identify the author of the message
 				Keep_history = False
+				# The variable User doesn’t necessarily identify the author of the message
 				for Author in Users.values():
-					print(Author)
 					if Discord_username == Author["discord_username"]:
 						if "hist_keep_all" in Author and Author["hist_keep_all"]:
 							Keep_history = True
 						break
 				Attachments = json.loads(Attachments) if Attachments else []
-				print(Keep_history)
-				print(Attachments)
 				if Attachments:
 					Storage_dir = User.get("hist_files_storage")
+					Updated_filenames = []
 					if not Storage_dir:
 						print(f"Error: The folder where {User['name']}’s attachments were stored isn’t accessible.")
 						return
 					for Filename in Attachments:
 						File_path = os.path.join(Storage_dir, Filename)
 						if os.path.exists(File_path):
-							if "hist_keep_all" in Author and Author["hist_keep_all"]:
-								Base_name, File_ext = os.path.splitext(Filename)
-								# Split the filename into the date and the rest of it
-								Parts = Base_name.split("—", 1)
-								if len(Parts) == 2:
-									New_base_name = f"{Parts[0]}—DELETED—{Parts[1]}"
-								else:
-									# Fallback for unexpected cases
-									New_base_name = f"DELETED—{Base_name}"
-								New_filename = f"{New_base_name}{File_ext}"
+							if Keep_history:
+								New_filename = New_name_for_deleted_file(Filename)
 								New_file_path = os.path.join(Storage_dir, New_filename)
 								os.rename(File_path, New_file_path)
 								Updated_filenames.append(New_filename)
 							else:
-								if os.path.exists(File_path):
-									try:
-										os.remove(File_path)
-									except OSError as e:
-										print(f"Error deleting file {Filename}: {e}")
+								try:
+									os.remove(File_path)
+								except OSError as e:
+									print(f"Error deleting file {Filename}: {e}")
 						else:
+							# We keep the invalid filename to avoid losing all reference
+							Updated_filenames.append(Filename)
 							print(f"Error: File {Filename} not found.")
 					Updated_filenames = json.dumps(Updated_filenames)
-				print(Updated_filenames)
 				DB_manager.History_deletion(User["name"],
 					Message_id,
 					Keep_history,

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import MySQLdb
+import json
 
 from Config_manager import Config, Users
 
@@ -16,6 +17,8 @@ def Register_star(User_table, Server_id, Chan_id, Message_id, Star_count):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
 		# Check if the message is already in the DB
 		Cursor.execute(f"""
 				SELECT id FROM {User_table}_stars
@@ -46,6 +49,8 @@ def Remove_star(User_table, Message_id):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
 		# Get the current star count
 		Cursor.execute(f"""
 				SELECT star_count FROM {User_table}_stars
@@ -114,6 +119,8 @@ def Get_stars_list(User_table, Limit=None):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
 		# If Limit is provided, fetch only that many records, else fetch all
 		if Limit:
 			Cursor.execute(f"""
@@ -134,6 +141,8 @@ def Register_reward(User_table, Server_id, Chan_id, Message_id, Code, Cost):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
 		# Check if the message is already in the DB
 		Cursor.execute(f"""
 				SELECT id FROM {User_table}_stars
@@ -160,6 +169,8 @@ def Get_rewards_list(User_table, Limit=None):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
 		# If Limit is provided, fetch only that many records, else fetch all
 		Request_supplement = ""
 		if Limit:
@@ -177,12 +188,9 @@ def Get_current_balance(User_table):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
-		#Cursor.execute(
-		#	"SELECT "
-		#	f"(SELECT SUM(star_count) FROM {User_table}_stars) AS total_stars, "
-		#	f"(SELECT SUM(cost) FROM {User_table}_rewards) AS total_rewards"
-		#)
-		Cursor.execute("""
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
+		Cursor.execute(f"""
 				SELECT
 				(SELECT SUM(star_count) FROM {User_table}_stars)
 				AS total_stars,
@@ -200,7 +208,9 @@ def History_addition(User_table, Date, Server_id, Chan_id, Message_id, Replied_m
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
-		# Check if the message is already in the DB
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
+		# Check if the message is in the DB
 		Cursor.execute(f"""
 				SELECT message_id FROM {User_table}_history
 				WHERE message_id = %s""",
@@ -228,7 +238,9 @@ def History_edition(User_table, Message_id, Date, New_content):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
-		# Check if the message is present in the DB
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
+		# Check if the message is in the DB
 		Cursor.execute(f"""
 				SELECT user_name, content FROM {User_table}_history
 				WHERE message_id = %s""",
@@ -262,6 +274,8 @@ def History_deletion(User_table, Message_id, Keep_history, Date, Updated_filenam
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
 		# Check if the message is in the DB
 		Cursor.execute(f"SELECT user_name FROM {User_table}_history WHERE message_id = %s", (Message_id,))
 		Result = Cursor.fetchone()
@@ -289,10 +303,46 @@ def History_deletion(User_table, Message_id, Keep_history, Date, Updated_filenam
 		Cursor.close()
 		Connection.close()
 
+def History_update_filename(User_table, Old_filename, New_filename):
+	Connection = Connect_DB()
+	Cursor = Connection.cursor()
+	try:
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
+		# Check if there is an entry whose attachments field contains the value of Old_filename
+		Cursor.execute(f"""
+				SELECT message_id, attachments FROM {User_table}_history
+				WHERE attachments LIKE %s""",
+				('%\\"' + Old_filename.replace("—", "\\\\u2014") + '\\"%',))
+		Result = Cursor.fetchone()
+		if Result:
+			Message_id = Result[0]
+			Filenames = json.loads(Result[1])
+			Updated_filenames = []
+			for Filename in Filenames:
+				if Filename == Old_filename:
+					Updated_filenames.append(New_filename)
+				else:
+					Updated_filenames.append(Filename)
+			Updated_filenames = json.dumps(Updated_filenames)
+			Cursor.execute(f"""
+					UPDATE {User_table}_history
+					SET attachments = %s
+					WHERE message_id = %s""",
+					(Updated_filenames, Message_id))
+		else:
+			print("Error: This message has no attachment recorded in the DB")
+		Connection.commit()
+	finally:
+		Cursor.close()
+		Connection.close()
+
 def History_fetch_message(User_table, Message_id):
 	Connection = Connect_DB()
 	Cursor = Connection.cursor()
 	try:
+		if not User_table.isidentifier():
+			raise ValueError("Error: Invalid table name.")
 		Cursor.execute(f"""
 					SELECT
 					date_creation,

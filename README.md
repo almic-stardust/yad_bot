@@ -42,7 +42,7 @@ Create a base, then the tables. Replace \<username\> with the user name in lower
 	);
 
 	CREATE TABLE <username>_history (
-	    date_creation   TIMESTAMP NOT NULL,
+	    date_creation   TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00'
 	    server_id       BIGINT NOT NULL,
 	    chan_id         BIGINT NOT NULL,
 	    message_id      BIGINT NOT NULL PRIMARY KEY,
@@ -54,6 +54,8 @@ Create a base, then the tables. Replace \<username\> with the user name in lower
 	    reactions       TEXT NULL,
 	    date_deletion   TIMESTAMP NULL
 	);
+
+Creating the field date_creation with “TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00'” is necessary. Otherwise, MySQL automatically assigns the following attributes to the column: “DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP”, which would cause the message’s creation date to be lost with any changes to the field.
 
 #### Last steps
 

@@ -31,7 +31,7 @@ def Split_reply(Reply):
 	# If the response contains several lines, it must be split into several strings
 	Lines = Reply.split("\n")
 	for Line in Lines:
-		# +1 for the newline character
+		# The +1 is for the newline character
 		if len(Current_part) + len(Line) + 1 > 2000:
 			Splitted_reply.append(Current_part)
 			# Start a new part
